@@ -40,6 +40,14 @@ jobs:
       - name: Run Isar code generation
         run: dart run build_runner build --delete-conflicting-outputs
 
+      # Automatically patch the invalid constant configuration in main.dart before any check
+      - name: Fix AudioServiceConfig assertion in main.dart
+        run: |
+          if [ -f "lib/main.dart" ]; then
+            sed -i "s/androidNotificationOngoing: true/androidNotificationOngoing: false/g" lib/main.dart
+            echo "AudioServiceConfig patched successfully."
+          fi
+
       - name: Auto format code and commit if changed
         run: |
           dart format lib
@@ -47,7 +55,7 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@://github.com"
           git add lib/
           if ! git diff-index --quiet HEAD; then
-            git commit -m "chore: auto format dart source files"
+            git commit -m "chore: auto format and patch source files"
             git push origin HEAD:${{ github.head_ref || github.ref_name }}
           else
             echo "No formatting changes needed."
@@ -67,7 +75,7 @@ jobs:
           retention-days: 14
 
   # ---------------------------------------------------------------------
-  # Android debug + release APK. Release uses debug signing
+  # Android debug + release APK.
   # ---------------------------------------------------------------------
   build_android:
     name: Build Android
@@ -92,6 +100,13 @@ jobs:
 
       - name: Run Isar code generation
         run: dart run build_runner build --delete-conflicting-outputs
+
+      # Apply the same AudioService patch so compilation passes successfully during APK build
+      - name: Patch AudioServiceConfig assertion for compilation
+        run: |
+          if [ -f "lib/main.dart" ]; then
+            sed -i "s/androidNotificationOngoing: true/androidNotificationOngoing: false/g" lib/main.dart
+          fi
 
       - name: Decode release keystore (if configured)
         env:
@@ -140,10 +155,17 @@ jobs:
       - name: Run Isar code generation
         run: dart run build_runner build --delete-conflicting-outputs
 
-      # Fixed Xcode workspace scanning issue by safely running inside the ios framework directory
+      # Apply the same patch for iOS compile setup
+      - name: Patch AudioServiceConfig assertion for iOS
+        run: |
+          if [ -f "lib/main.dart" ]; then
+            sed -i "" "s/androidNotificationOngoing: true/androidNotificationOngoing: false/g" lib/main.dart || sed -i "s/androidNotificationOngoing: true/androidNotificationOngoing: false/g" lib/main.dart
+          fi
+
       - name: Install CocoaPods dependencies
         run: |
-          cd ios && pod repo update && pod install
+          pod repo update
+          cd ios && pod install
 
       - name: Build (no codesign)
         run: flutter build ios --release --no-codesign
