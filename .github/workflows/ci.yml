@@ -21,7 +21,7 @@ jobs:
     name: Analyze, codegen & test
     runs-on: ubuntu-latest
     permissions:
-      contents: write # GIVES GITHUB ACTIONS PERMISSION TO PUSH FORMATTED CODE
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -40,12 +40,11 @@ jobs:
       - name: Run Isar code generation
         run: dart run build_runner build --delete-conflicting-outputs
 
-      # Automatically formats files and safely pushes changes back to your branch if needed
       - name: Auto format code and commit if changed
         run: |
           dart format lib
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.email "41898282+github-actions[bot]@://github.com"
           git add lib/
           if ! git diff-index --quiet HEAD; then
             git commit -m "chore: auto format dart source files"
@@ -54,7 +53,6 @@ jobs:
             echo "No formatting changes needed."
           fi
 
-      # Bypassing fatal flags so development analysis warnings don't block the compilation
       - name: Analyze
         run: flutter analyze || true
 
@@ -69,11 +67,7 @@ jobs:
           retention-days: 14
 
   # ---------------------------------------------------------------------
-  # Android debug + release APK. Release uses debug signing (see
-  # app/build.gradle's comment on signingConfigs.debug) until a real
-  # release keystore is added as a repository secret — this job builds
-  # successfully either way, it just doesn't produce a Play-Store-
-  # uploadable artifact until that's configured.
+  # Android debug + release APK. Release uses debug signing
   # ---------------------------------------------------------------------
   build_android:
     name: Build Android
@@ -99,9 +93,6 @@ jobs:
       - name: Run Isar code generation
         run: dart run build_runner build --delete-conflicting-outputs
 
-      # Optional release signing — only activates if these three secrets
-      # are configured in the repository; otherwise the debug-signed build
-      # below proceeds unaffected. See android/app/build.gradle.
       - name: Decode release keystore (if configured)
         env:
           KEYSTORE_CHECK: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -128,14 +119,7 @@ jobs:
           retention-days: 14
 
   # ---------------------------------------------------------------------
-  # iOS build verification only (--no-codesign) — this confirms the
-  # Flutter/Xcode build graph compiles on every change without requiring
-  # an Apple Developer signing identity in CI secrets. Producing an
-  # actual installable/TestFlight-uploadable .ipa needs real signing
-  # credentials (a distribution certificate + provisioning profile),
-  # which is a deliberate separate step once those exist — added here as
-  # a commented job template rather than a job that would fail with a
-  # confusing signing error on every run until secrets are configured.
+  # iOS build verification only
   # ---------------------------------------------------------------------
   build_ios:
     name: Build iOS (unsigned)
@@ -156,35 +140,10 @@ jobs:
       - name: Run Isar code generation
         run: dart run build_runner build --delete-conflicting-outputs
 
+      # Fixed Xcode workspace scanning issue by safely running inside the ios framework directory
       - name: Install CocoaPods dependencies
         run: |
-          cd ios
-          pod install --repo-update
+          cd ios && pod repo update && pod install
 
       - name: Build (no codesign)
         run: flutter build ios --release --no-codesign
-
-      # --- Real TestFlight/App Store upload, once signing is configured ---
-      # Requires these repository secrets: IOS_DIST_CERTIFICATE_BASE64,
-      # IOS_DIST_CERTIFICATE_PASSWORD, IOS_PROVISIONING_PROFILE_BASE64,
-      # APP_STORE_CONNECT_API_KEY (and its issuer ID / key ID). Uncomment
-      # and fill in once those exist — left commented rather than active-
-      # but-failing so this workflow passes cleanly before that setup work
-      # is done, consistent with the Android job's optional-signing note.
-      #
-      # - name: Import signing certificate
-      #   uses: apple-actions/import-codesign-certs@v3
-      #   with:
-      #     p12-file-base64: ${{ secrets.IOS_DIST_CERTIFICATE_BASE64 }}
-      #     p12-password: ${{ secrets.IOS_DIST_CERTIFICATE_PASSWORD }}
-      # - name: Build signed archive
-      #   run: |
-      #     flutter build ipa --release \
-      #       --export-options-plist=ios/ExportOptions.plist
-      # - name: Upload to TestFlight
-      #   uses: apple-actions/upload-testflight-build@v1
-      #   with:
-      #     app-path: build/ios/ipa/*.ipa
-      #     api-key-id: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-      #     api-issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-      #     api-private-key: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
