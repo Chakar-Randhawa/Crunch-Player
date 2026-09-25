@@ -40,9 +40,17 @@ subprojects {
             // Fix for on_audio_query manifest package conflict
             if (project.name.contains("on_audio_query")) {
                 project.android.namespace = "com.lucasjosino.on_audio_query"
-                
-                // Yeh automatically purane manifest package attribute error ko ignore karwa dega
                 project.android.aaptOptions.namespaced = false
+            }
+        }
+        
+        // Final Fix: Bypasses the strict JVM Target validation crash for all plugins
+        if (project.plugins.hasPlugin("org.jetbrains.kotlin.android")) {
+            project.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile.class).configureEach {
+                compilerOptions {
+                    // Suppresses the inconsistent 1.8 vs 17 target crash completely
+                    jvmTargetValidationMode = org.jetbrains.kotlin.gradle.dsl.JvmTargetValidationMode.IGNORE
+                }
             }
         }
     }
