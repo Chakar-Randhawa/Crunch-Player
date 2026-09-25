@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#FFFFFF">
+    <!-- Simple waveform glyph — matches the in-app wordmark's bar motif
+         from features/splash/splash_screen.dart's _MarkPainter, kept as a
+         plain single-color vector since Android notification icons must
+         be a flat silhouette (the system applies its own tint). -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M4,10 L4,14 L6,14 L6,10 Z M9,6 L9,18 L11,18 L11,6 Z M14,3 L14,21 L16,21 L16,3 Z M19,8 L19,16 L21,16 L21,8 Z" />
+</vector>

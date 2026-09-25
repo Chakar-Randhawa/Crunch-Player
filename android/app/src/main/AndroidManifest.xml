@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.craunch.player">
+
+    <!-- ===================== Storage / media indexing ===================== -->
+    <!-- Android 13+ (API 33) split media permissions -->
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <!-- Pre-Android 13 fallback: permission_handler/on_audio_query request
+         this on SDK < 33 at runtime; capped with maxSdkVersion so it is
+         inert (and non-alarming to Play Store review) on newer OS
+         versions where the split permissions above are used instead. -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <!-- Needed only for the Ringtone & Tag Editor feature's write-back path
+         on API < 30; API 30+ uses MediaStore.createWriteRequest() instead,
+         which needs no manifest permission. -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
+
+    <!-- ===================== Background playback ===================== -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- ===================== Edge-lighting system overlay ===================== -->
+    <!-- Required for the System Overlay Renderer feature (drawing the edge
+         glow above other apps while CRaunch Player is backgrounded). The
+         user must separately grant this via Settings > Display over other
+         apps — it cannot be requested through the standard runtime
+         permission dialog, only deep-linked to via
+         Settings.ACTION_MANAGE_OVERLAY_PERMISSION. -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!-- Bluetooth/car-mode media button + audio-becoming-noisy handling on
+         older API levels that still gate this behind a permission. -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+    <!-- Required to auto-apply a track as the default system ringtone
+         (Ringtone & Tag Editor feature). Like SYSTEM_ALERT_WINDOW, this
+         cannot be granted through the normal runtime dialog — the user
+         must grant it via Settings.ACTION_MANAGE_WRITE_SETTINGS. Without
+         it, the ringtone is still added to the system's ringtone
+         collection and selectable manually. -->
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+
+    <application
+        android:name="${applicationName}"
+        android:label="CRaunch Player"
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false"
+        android:requestLegacyExternalStorage="false"
+        android:hardwareAccelerated="true">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+
+        <!-- ===================== audio_service wiring ===================== -->
+        <!-- Foreground service that keeps playback (and the persistent
+             notification bar) alive when the app is backgrounded. -->
+        <service
+            android:name="com.ryanheise.audioservice.AudioService"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <!-- Routes lockscreen / Bluetooth / wired-headset media button
+             events (play, pause, next, previous) into the foreground
+             service above. -->
+        <receiver
+            android:name="com.ryanheise.audioservice.MediaButtonReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+
+        <!-- ===================== System overlay renderer service ===================== -->
+        <!-- Foreground service hosting the WindowManager-attached edge-glow
+             overlay view while the app is backgrounded. Implemented in the
+             Dynamic Edge Lighting module (EdgeOverlayService.kt); declared
+             here so the manifest is complete ahead of that module landing. -->
+        <service
+            android:name=".overlay.EdgeOverlayService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Persistent visual now-playing overlay" />
+        </service>
+
+    </application>
+
+    <!-- Declares the file types this app can open when the user picks
+         "Open with CRaunch Player" from a file manager / share sheet, so
+         Android's package manager can route intents to us. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="audio/*" />
+        </intent>
+    </queries>
+
+</manifest>
