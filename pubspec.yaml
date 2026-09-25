@@ -1,0 +1,42 @@
+name: craunch_player
+description: "CRaunch Player — offline-first native-quality music player"
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  just_audio: ^0.9.40
+  audio_service: ^0.18.15
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
+  path_provider: ^2.1.3
+  path: ^1.9.0
+  device_info_plus: ^10.1.0
+  onnxruntime: ^1.4.1
+  sensors_plus: ^6.0.1
+  http: ^1.2.1
+  permission_handler: ^11.3.1
+  palette_generator: ^0.3.3+3
+  on_audio_query: ^2.9.0
+  flutter_riverpod: ^2.5.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  isar_generator: ^3.1.0+1
+  build_runner: ^2.4.9
+
+flutter:
+  uses-material-design: true
+  assets:
+    # spleeter_2stem_unet.onnx here is real: converted from Deezer's
+    # official pretrained Spleeter 2-stems checkpoint (MIT-licensed,
+    # github.com/deezer/spleeter), verified against the original model's
+    # own output — see assets/models/README.md for the full verification
+    # notes and known limitations.
+    - assets/models/
