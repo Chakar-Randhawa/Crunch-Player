@@ -36,11 +36,13 @@ subprojects {
             if (project.name == "isar_flutter_libs" || project.android.namespace == null) {
                 project.android.namespace = "dev.isar.isar_flutter_libs"
             }
-            // Fix for on_audio_query package attribute conflict
+            
+            // Fix for on_audio_query manifest package conflict
             if (project.name.contains("on_audio_query")) {
                 project.android.namespace = "com.lucasjosino.on_audio_query"
-                // Yeh step manifest ke package attribute ko crash karne se rokega
-                project.android.defaultConfig.applicationId = "com.lucasjosino.on_audio_query"
+                
+                // Yeh automatically purane manifest package attribute error ko ignore karwa dega
+                project.android.aaptOptions.namespaced = false
             }
         }
     }
