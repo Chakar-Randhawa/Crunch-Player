@@ -20,8 +20,13 @@ jobs:
   analyze_and_test:
     name: Analyze, codegen & test
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # GIVES GITHUB ACTIONS PERMISSION TO PUSH FORMATTED CODE
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - uses: subosito/flutter-action@v2
         with:
@@ -35,8 +40,19 @@ jobs:
       - name: Run Isar code generation
         run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Verify formatting
-        run: dart format --output=none --set-exit-if-changed lib
+      # Automatically formats files and safely pushes changes back to your branch if needed
+      - name: Auto format code and commit if changed
+        run: |
+          dart format lib
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@://github.com"
+          git add lib/
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "chore: auto format dart source files"
+            git push origin HEAD:${{ github.head_ref || github.ref_name }}
+          else
+            echo "No formatting changes needed."
+          fi
 
       - name: Analyze
         run: flutter analyze --fatal-infos
