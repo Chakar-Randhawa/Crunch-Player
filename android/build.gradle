@@ -43,18 +43,6 @@ subprojects {
                 project.android.aaptOptions.namespaced = false
             }
         }
-        
-        // Final Fix: Safe string properties manipulation to bypass the validation crash
-        if (project.plugins.hasPlugin("org.jetbrains.kotlin.android")) {
-            project.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile.class).configureEach {
-                try {
-                    compilerOptions.jvmTargetValidationMode.set(org.jetbrains.kotlin.gradle.dsl.JvmTargetValidationMode.IGNORE)
-                } catch (Exception e) {
-                    // Fallback configuration if using an older/newer KGP syntax structure
-                    project.setProperty("kotlin.jvm.target.validation.mode", "ignore")
-                }
-            }
-        }
     }
     if (project.state.executed) {
         pluginHooks()
@@ -64,4 +52,3 @@ subprojects {
         }
     }
 }
-
