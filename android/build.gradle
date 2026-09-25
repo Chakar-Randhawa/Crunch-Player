@@ -44,12 +44,14 @@ subprojects {
             }
         }
         
-        // Final Fix: Bypasses the strict JVM Target validation crash for all plugins
+        // Final Fix: Safe string properties manipulation to bypass the validation crash
         if (project.plugins.hasPlugin("org.jetbrains.kotlin.android")) {
             project.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile.class).configureEach {
-                compilerOptions {
-                    // Suppresses the inconsistent 1.8 vs 17 target crash completely
-                    jvmTargetValidationMode = org.jetbrains.kotlin.gradle.dsl.JvmTargetValidationMode.IGNORE
+                try {
+                    compilerOptions.jvmTargetValidationMode.set(org.jetbrains.kotlin.gradle.dsl.JvmTargetValidationMode.IGNORE)
+                } catch (Exception e) {
+                    // Fallback configuration if using an older/newer KGP syntax structure
+                    project.setProperty("kotlin.jvm.target.validation.mode", "ignore")
                 }
             }
         }
@@ -62,3 +64,4 @@ subprojects {
         }
     }
 }
+
