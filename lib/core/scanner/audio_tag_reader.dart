@@ -79,7 +79,8 @@ class AudioTagReader {
         int bodyLength = tagSize;
 
         final fullTagBytes = await _readBytes(raf, 0, 10 + tagSize);
-        Uint8List body = fullTagBytes.sublist(10, 10 + tagSize.clamp(0, fullTagBytes.length - 10));
+        Uint8List body = fullTagBytes.sublist(
+            10, 10 + tagSize.clamp(0, fullTagBytes.length - 10));
 
         if (hasExtendedHeader && body.length >= 4) {
           final extSize = majorVersion >= 4
@@ -112,7 +113,8 @@ class AudioTagReader {
         }
       }
 
-      final frameInfo = await _estimateMp3DurationAndBitrate(raf, audioStartOffset, length);
+      final frameInfo =
+          await _estimateMp3DurationAndBitrate(raf, audioStartOffset, length);
       result.durationMs = frameInfo.$1;
       result.bitrateKbps = frameInfo.$2;
     } finally {
@@ -121,7 +123,8 @@ class AudioTagReader {
     return result;
   }
 
-  void _parseId3v2Frames(Uint8List body, int majorVersion, AudioTagResult result) {
+  void _parseId3v2Frames(
+      Uint8List body, int majorVersion, AudioTagResult result) {
     int offset = 0;
     final idLength = majorVersion == 2 ? 3 : 4;
     final sizeIsSynchsafe = majorVersion >= 4;
@@ -135,7 +138,8 @@ class AudioTagReader {
 
       int frameSize;
       if (majorVersion == 2) {
-        frameSize = (body[offset] << 16) | (body[offset + 1] << 8) | body[offset + 2];
+        frameSize =
+            (body[offset] << 16) | (body[offset + 1] << 8) | body[offset + 2];
         offset += 3;
       } else {
         final sizeBytes = body.sublist(offset, offset + 4);
@@ -197,15 +201,24 @@ class AudioTagReader {
     try {
       switch (encoding) {
         case 0x00:
-          return latin1.decode(data, allowInvalid: true).replaceAll('\x00', '').trim();
+          return latin1
+              .decode(data, allowInvalid: true)
+              .replaceAll('\x00', '')
+              .trim();
         case 0x01:
           return _decodeUtf16(data, bomPresent: true);
         case 0x02:
           return _decodeUtf16(data, bomPresent: false);
         case 0x03:
-          return utf8.decode(data, allowMalformed: true).replaceAll('\x00', '').trim();
+          return utf8
+              .decode(data, allowMalformed: true)
+              .replaceAll('\x00', '')
+              .trim();
         default:
-          return latin1.decode(data, allowInvalid: true).replaceAll('\x00', '').trim();
+          return latin1
+              .decode(data, allowInvalid: true)
+              .replaceAll('\x00', '')
+              .trim();
       }
     } catch (_) {
       return null;
@@ -255,7 +268,10 @@ class AudioTagReader {
   }
 
   String _trimNullPadded(Uint8List bytes) {
-    return latin1.decode(bytes, allowInvalid: true).replaceAll('\x00', '').trim();
+    return latin1
+        .decode(bytes, allowInvalid: true)
+        .replaceAll('\x00', '')
+        .trim();
   }
 
   /// Locates the first valid MPEG audio frame header after any ID3v2 tag,
@@ -270,7 +286,22 @@ class AudioTagReader {
     int fileLength,
   ) async {
     const bitrateTableV1L3 = [
-      0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 0
+      0,
+      32,
+      40,
+      48,
+      56,
+      64,
+      80,
+      96,
+      112,
+      128,
+      160,
+      192,
+      224,
+      256,
+      320,
+      0
     ];
     const sampleRateTableV1 = [44100, 48000, 32000, 0];
 
@@ -287,12 +318,14 @@ class AudioTagReader {
 
       final versionBits = (b2 >> 3) & 0x03;
       final layerBits = (b2 >> 1) & 0x03;
-      if (versionBits != 0x03 || layerBits != 0x01) continue; // require MPEG1 Layer III
+      if (versionBits != 0x03 || layerBits != 0x01)
+        continue; // require MPEG1 Layer III
 
       final b3 = searchWindow[i + 2];
       final bitrateIndex = (b3 >> 4) & 0x0F;
       final sampleRateIndex = (b3 >> 2) & 0x03;
-      if (bitrateIndex == 0 || bitrateIndex == 15 || sampleRateIndex == 3) continue;
+      if (bitrateIndex == 0 || bitrateIndex == 15 || sampleRateIndex == 3)
+        continue;
 
       final bitrateKbps = bitrateTableV1L3[bitrateIndex];
       final sampleRate = sampleRateTableV1[sampleRateIndex];
@@ -330,7 +363,8 @@ class AudioTagReader {
           // STREAMINFO
           final block = await _readBytes(raf, offset, blockLength);
           if (block.length >= 18) {
-            final sampleRate = (block[10] << 12) | (block[11] << 4) | (block[12] >> 4);
+            final sampleRate =
+                (block[10] << 12) | (block[11] << 4) | (block[12] >> 4);
             final totalSamples = ((block[13] & 0x0F) << 32) |
                 (block[14] << 24) |
                 (block[15] << 16) |
@@ -377,15 +411,19 @@ class AudioTagReader {
         final chunkHeader = await _readBytes(raf, offset, 8);
         if (chunkHeader.length < 8) break;
         final chunkId = latin1.decode(chunkHeader.sublist(0, 4));
-        final chunkSize = ByteData.sublistView(chunkHeader, 4, 8).getUint32(0, Endian.little);
+        final chunkSize =
+            ByteData.sublistView(chunkHeader, 4, 8).getUint32(0, Endian.little);
         offset += 8;
 
         if (chunkId == 'fmt ') {
           final fmt = await _readBytes(raf, offset, chunkSize);
           if (fmt.length >= 16) {
-            byteRate = ByteData.sublistView(fmt, 8, 12).getUint32(0, Endian.little);
-            final bitsPerSample = ByteData.sublistView(fmt, 14, 16).getUint16(0, Endian.little);
-            final numChannels = ByteData.sublistView(fmt, 2, 4).getUint16(0, Endian.little);
+            byteRate =
+                ByteData.sublistView(fmt, 8, 12).getUint32(0, Endian.little);
+            final bitsPerSample =
+                ByteData.sublistView(fmt, 14, 16).getUint16(0, Endian.little);
+            final numChannels =
+                ByteData.sublistView(fmt, 2, 4).getUint16(0, Endian.little);
             result.bitrateKbps = ((byteRate * 8) / 1000).round();
             // silence unused-var lint if bitsPerSample/numChannels aren't
             // needed beyond byteRate for duration math
@@ -396,7 +434,8 @@ class AudioTagReader {
           break;
         }
 
-        offset += chunkSize + (chunkSize.isOdd ? 1 : 0); // chunks are word-aligned
+        offset +=
+            chunkSize + (chunkSize.isOdd ? 1 : 0); // chunks are word-aligned
       }
     } finally {
       await raf.close();
@@ -420,22 +459,29 @@ class AudioTagReader {
       int sampleRate = 44100;
       final idPacketOffset = _findBytes(firstPage, ascii.encode('vorbis'));
       if (idPacketOffset != -1 && idPacketOffset + 16 <= firstPage.length) {
-        sampleRate = ByteData.sublistView(firstPage, idPacketOffset + 6, idPacketOffset + 10)
+        sampleRate = ByteData.sublistView(
+                firstPage, idPacketOffset + 6, idPacketOffset + 10)
             .getUint32(0, Endian.little);
       }
 
-      final commentPacketOffset = _findBytes(firstPage, ascii.encode('vorbis'), idPacketOffset + 1);
+      final commentPacketOffset =
+          _findBytes(firstPage, ascii.encode('vorbis'), idPacketOffset + 1);
       if (commentPacketOffset != -1) {
-        _parseVorbisComment(firstPage.sublist(commentPacketOffset - 1), result, skipVendorAt: 6);
+        _parseVorbisComment(firstPage.sublist(commentPacketOffset - 1), result,
+            skipVendorAt: 6);
       }
 
       // Last page's granule position (offset 6..14 of the page header)
       // gives total PCM sample count for duration.
-      final tailWindow = await _readBytes(raf, (length - 8192).clamp(0, length), 8192.clamp(0, length));
+      final tailWindow = await _readBytes(
+          raf, (length - 8192).clamp(0, length), 8192.clamp(0, length));
       final lastOggS = _lastIndexOfBytes(tailWindow, ascii.encode('OggS'));
-      if (lastOggS != -1 && lastOggS + 14 <= tailWindow.length && sampleRate > 0) {
-        final granule = ByteData.sublistView(tailWindow, lastOggS + 6, lastOggS + 14)
-            .getUint64(0, Endian.little);
+      if (lastOggS != -1 &&
+          lastOggS + 14 <= tailWindow.length &&
+          sampleRate > 0) {
+        final granule =
+            ByteData.sublistView(tailWindow, lastOggS + 6, lastOggS + 14)
+                .getUint64(0, Endian.little);
         result.durationMs = ((granule / sampleRate) * 1000).round();
       }
     } catch (_) {
@@ -447,21 +493,26 @@ class AudioTagReader {
     return result;
   }
 
-  void _parseVorbisComment(Uint8List block, AudioTagResult result, {int skipVendorAt = 0}) {
+  void _parseVorbisComment(Uint8List block, AudioTagResult result,
+      {int skipVendorAt = 0}) {
     try {
       int offset = skipVendorAt;
       if (offset + 4 > block.length) return;
-      final vendorLength = ByteData.sublistView(block, offset, offset + 4).getUint32(0, Endian.little);
+      final vendorLength = ByteData.sublistView(block, offset, offset + 4)
+          .getUint32(0, Endian.little);
       offset += 4 + vendorLength;
       if (offset + 4 > block.length) return;
-      final commentCount = ByteData.sublistView(block, offset, offset + 4).getUint32(0, Endian.little);
+      final commentCount = ByteData.sublistView(block, offset, offset + 4)
+          .getUint32(0, Endian.little);
       offset += 4;
 
       for (int i = 0; i < commentCount && offset + 4 <= block.length; i++) {
-        final len = ByteData.sublistView(block, offset, offset + 4).getUint32(0, Endian.little);
+        final len = ByteData.sublistView(block, offset, offset + 4)
+            .getUint32(0, Endian.little);
         offset += 4;
         if (offset + len > block.length) break;
-        final comment = utf8.decode(block.sublist(offset, offset + len), allowMalformed: true);
+        final comment = utf8.decode(block.sublist(offset, offset + len),
+            allowMalformed: true);
         offset += len;
 
         final eq = comment.indexOf('=');
@@ -483,7 +534,8 @@ class AudioTagReader {
             result.genre = value;
             break;
           case 'DATE':
-            result.year = int.tryParse(value.length >= 4 ? value.substring(0, 4) : value);
+            result.year =
+                int.tryParse(value.length >= 4 ? value.substring(0, 4) : value);
             break;
           case 'TRACKNUMBER':
             result.trackNumber = int.tryParse(value.split('/').first);
@@ -508,20 +560,25 @@ class AudioTagReader {
       final moovBox = await _findMp4Box(raf, 'moov', 0, length);
       if (moovBox == null) return result;
 
-      final mvhd = await _findMp4Box(raf, 'mvhd', moovBox.$1, moovBox.$1 + moovBox.$2);
+      final mvhd =
+          await _findMp4Box(raf, 'mvhd', moovBox.$1, moovBox.$1 + moovBox.$2);
       if (mvhd != null) {
         final header = await _readBytes(raf, mvhd.$1, mvhd.$2);
         if (header.length >= 20) {
           final version = header[0];
           if (version == 1 && header.length >= 32) {
-            final timescale = ByteData.sublistView(header, 20, 24).getUint32(0, Endian.big);
-            final duration = ByteData.sublistView(header, 24, 32).getUint64(0, Endian.big);
+            final timescale =
+                ByteData.sublistView(header, 20, 24).getUint32(0, Endian.big);
+            final duration =
+                ByteData.sublistView(header, 24, 32).getUint64(0, Endian.big);
             if (timescale > 0) {
               result.durationMs = ((duration / timescale) * 1000).round();
             }
           } else if (header.length >= 20) {
-            final timescale = ByteData.sublistView(header, 12, 16).getUint32(0, Endian.big);
-            final duration = ByteData.sublistView(header, 16, 20).getUint32(0, Endian.big);
+            final timescale =
+                ByteData.sublistView(header, 12, 16).getUint32(0, Endian.big);
+            final duration =
+                ByteData.sublistView(header, 16, 20).getUint32(0, Endian.big);
             if (timescale > 0) {
               result.durationMs = ((duration / timescale) * 1000).round();
             }
@@ -529,12 +586,14 @@ class AudioTagReader {
         }
       }
 
-      final udta = await _findMp4Box(raf, 'udta', moovBox.$1, moovBox.$1 + moovBox.$2);
+      final udta =
+          await _findMp4Box(raf, 'udta', moovBox.$1, moovBox.$1 + moovBox.$2);
       if (udta != null) {
         final meta = await _findMp4Box(raf, 'meta', udta.$1, udta.$1 + udta.$2);
         if (meta != null) {
           // 'meta' box has a 4-byte version/flags field before its children.
-          final ilst = await _findMp4Box(raf, 'ilst', meta.$1 + 4, meta.$1 + meta.$2);
+          final ilst =
+              await _findMp4Box(raf, 'ilst', meta.$1 + 4, meta.$1 + meta.$2);
           if (ilst != null) {
             await _parseIlstAtoms(raf, ilst.$1, ilst.$1 + ilst.$2, result);
           }
@@ -551,7 +610,8 @@ class AudioTagReader {
 
   /// Searches [start, end) for a top-level box with the given fourCC and
   /// returns (contentStart, contentLength), or null if absent.
-  Future<(int, int)?> _findMp4Box(RandomAccessFile raf, String fourCC, int start, int end) async {
+  Future<(int, int)?> _findMp4Box(
+      RandomAccessFile raf, String fourCC, int start, int end) async {
     int offset = start;
     while (offset + 8 <= end) {
       final header = await _readBytes(raf, offset, 8);
@@ -575,7 +635,8 @@ class AudioTagReader {
     return null;
   }
 
-  Future<void> _parseIlstAtoms(RandomAccessFile raf, int start, int end, AudioTagResult result) async {
+  Future<void> _parseIlstAtoms(
+      RandomAccessFile raf, int start, int end, AudioTagResult result) async {
     const atomMap = {
       '©nam': 'title',
       '©ART': 'artist',
@@ -589,15 +650,18 @@ class AudioTagReader {
     while (offset + 8 <= end) {
       final header = await _readBytes(raf, offset, 8);
       if (header.length < 8) break;
-      final boxSize = ByteData.sublistView(header, 0, 4).getUint32(0, Endian.big);
+      final boxSize =
+          ByteData.sublistView(header, 0, 4).getUint32(0, Endian.big);
       final type = utf8.decode(header.sublist(4, 8), allowMalformed: true);
       if (boxSize < 8 || offset + boxSize > end) break;
 
       final field = atomMap[type];
       if (field != null) {
-        final dataBox = await _findMp4Box(raf, 'data', offset + 8, offset + boxSize);
+        final dataBox =
+            await _findMp4Box(raf, 'data', offset + 8, offset + boxSize);
         if (dataBox != null) {
-          final data = await _readBytes(raf, dataBox.$1 + 8, dataBox.$2 - 8); // skip version/flags/locale
+          final data = await _readBytes(
+              raf, dataBox.$1 + 8, dataBox.$2 - 8); // skip version/flags/locale
           _applyMp4Field(field, data, result);
         }
       }
@@ -621,11 +685,13 @@ class AudioTagReader {
         break;
       case 'year':
         final text = utf8.decode(data, allowMalformed: true).trim();
-        result.year = int.tryParse(text.length >= 4 ? text.substring(0, 4) : text);
+        result.year =
+            int.tryParse(text.length >= 4 ? text.substring(0, 4) : text);
         break;
       case 'track':
         if (data.length >= 4) {
-          result.trackNumber = ByteData.sublistView(data, 2, 4).getUint16(0, Endian.big);
+          result.trackNumber =
+              ByteData.sublistView(data, 2, 4).getUint16(0, Endian.big);
         }
         break;
     }
@@ -634,7 +700,8 @@ class AudioTagReader {
   // ---------------------------------------------------------------------
   // Shared byte helpers
   // ---------------------------------------------------------------------
-  Future<Uint8List> _readBytes(RandomAccessFile raf, int position, int count) async {
+  Future<Uint8List> _readBytes(
+      RandomAccessFile raf, int position, int count) async {
     if (count <= 0) return Uint8List(0);
     await raf.setPosition(position);
     return raf.read(count);

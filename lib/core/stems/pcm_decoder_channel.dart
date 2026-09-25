@@ -19,11 +19,13 @@ class PcmDecodeResult {
 /// (indirectly, via a shared decode step) the MP4→MP3 demuxer's transcode
 /// path use this rather than each maintaining their own MediaCodec logic.
 class PcmDecoderChannel {
-  static const MethodChannel _channel = MethodChannel('com.craunch.player/pcmdecoder');
+  static const MethodChannel _channel =
+      MethodChannel('com.craunch.player/pcmdecoder');
 
   const PcmDecoderChannel();
 
-  Future<PcmDecodeResult> decodeToPcm(String inputPath, String outputPath) async {
+  Future<PcmDecodeResult> decodeToPcm(
+      String inputPath, String outputPath) async {
     if (!Platform.isAndroid) {
       throw UnsupportedError(
         'PCM decode is currently implemented for Android only (MediaExtractor + '
@@ -33,7 +35,8 @@ class PcmDecoderChannel {
       );
     }
 
-    final result = await _channel.invokeMethod<Map<dynamic, dynamic>>('decodeToPcm', {
+    final result =
+        await _channel.invokeMethod<Map<dynamic, dynamic>>('decodeToPcm', {
       'inputPath': inputPath,
       'outputPath': outputPath,
     });

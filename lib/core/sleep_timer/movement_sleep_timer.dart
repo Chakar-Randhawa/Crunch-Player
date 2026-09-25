@@ -8,7 +8,8 @@ enum SleepTimerMode { off, fixedDuration, movementBased }
 class SleepTimerState {
   final SleepTimerMode mode;
   final Duration? remaining; // meaningful for fixedDuration mode
-  final Duration stillDuration; // meaningful for movementBased mode — how long stillness has held
+  final Duration
+      stillDuration; // meaningful for movementBased mode — how long stillness has held
   final bool fadingOut;
 
   const SleepTimerState({
@@ -51,7 +52,8 @@ class MovementSleepTimer {
   // compute variance — a phone lying still still reads ~9.8 m/s² from
   // gravity, so stillness is "low variance", not "near-zero magnitude".
   final List<double> _magnitudeWindow = [];
-  static const int _windowSize = 50; // ~2.5s of samples at a typical ~20Hz sensor rate
+  static const int _windowSize =
+      50; // ~2.5s of samples at a typical ~20Hz sensor rate
   DateTime? _stillSince;
 
   /// Below this variance (in (m/s²)²), the device is considered "still"
@@ -67,12 +69,14 @@ class MovementSleepTimer {
     required this.onFadeOutStart,
     required this.onTimerEnd,
     Duration Function()? currentFadeOutDuration,
-  }) : currentFadeOutDuration = currentFadeOutDuration ?? (() => const Duration(seconds: 20));
+  }) : currentFadeOutDuration =
+            currentFadeOutDuration ?? (() => const Duration(seconds: 20));
 
   void startFixedDuration(Duration duration) {
     cancel();
     var remaining = duration;
-    _updateState(SleepTimerState(mode: SleepTimerMode.fixedDuration, remaining: remaining));
+    _updateState(SleepTimerState(
+        mode: SleepTimerMode.fixedDuration, remaining: remaining));
 
     _fixedDurationTicker = Timer.periodic(const Duration(seconds: 1), (timer) {
       remaining -= const Duration(seconds: 1);
@@ -80,7 +84,8 @@ class MovementSleepTimer {
         onFadeOutStart();
         _updateState(_state.copyWithFading(remaining));
       } else {
-        _updateState(SleepTimerState(mode: SleepTimerMode.fixedDuration, remaining: remaining));
+        _updateState(SleepTimerState(
+            mode: SleepTimerMode.fixedDuration, remaining: remaining));
       }
 
       if (remaining <= Duration.zero) {
@@ -104,11 +109,13 @@ class MovementSleepTimer {
     // Evaluated on its own timer (rather than on every raw sensor event)
     // so the "how long has it been still" state update rate is
     // predictable regardless of the sensor's actual reporting frequency.
-    _stillnessCheckTimer = Timer.periodic(const Duration(seconds: 1), (_) => _evaluateStillness());
+    _stillnessCheckTimer =
+        Timer.periodic(const Duration(seconds: 1), (_) => _evaluateStillness());
   }
 
   void _handleAccelerometerEvent(AccelerometerEvent event) {
-    final magnitude = math.sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
+    final magnitude =
+        math.sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
     _magnitudeWindow.add(magnitude);
     if (_magnitudeWindow.length > _windowSize) {
       _magnitudeWindow.removeAt(0);
@@ -116,10 +123,14 @@ class MovementSleepTimer {
   }
 
   void _evaluateStillness() {
-    if (_magnitudeWindow.length < _windowSize) return; // not enough samples yet to judge
+    if (_magnitudeWindow.length < _windowSize)
+      return; // not enough samples yet to judge
 
-    final mean = _magnitudeWindow.reduce((a, b) => a + b) / _magnitudeWindow.length;
-    final variance = _magnitudeWindow.map((m) => (m - mean) * (m - mean)).reduce((a, b) => a + b) /
+    final mean =
+        _magnitudeWindow.reduce((a, b) => a + b) / _magnitudeWindow.length;
+    final variance = _magnitudeWindow
+            .map((m) => (m - mean) * (m - mean))
+            .reduce((a, b) => a + b) /
         _magnitudeWindow.length;
 
     final isStillNow = variance < movementSensitivityThreshold;
@@ -128,11 +139,14 @@ class MovementSleepTimer {
     if (isStillNow) {
       _stillSince ??= now;
     } else {
-      _stillSince = null; // any detected movement resets the still-duration clock entirely
+      _stillSince =
+          null; // any detected movement resets the still-duration clock entirely
     }
 
-    final stillDuration = _stillSince == null ? Duration.zero : now.difference(_stillSince!);
-    final fadeThresholdReached = stillDuration >= requiredStillDuration - currentFadeOutDuration();
+    final stillDuration =
+        _stillSince == null ? Duration.zero : now.difference(_stillSince!);
+    final fadeThresholdReached =
+        stillDuration >= requiredStillDuration - currentFadeOutDuration();
 
     if (fadeThresholdReached && !_state.fadingOut) {
       onFadeOutStart();

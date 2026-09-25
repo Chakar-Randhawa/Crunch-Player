@@ -7,7 +7,8 @@ class Album {
   Id id = Isar.autoIncrement;
 
   @Index(type: IndexType.hash, unique: true, replace: true)
-  late String albumKey; // "${albumName}::${artistName}", lowercased — de-dup key
+  late String
+      albumKey; // "${albumName}::${artistName}", lowercased — de-dup key
 
   @Index(type: IndexType.value, caseSensitive: false)
   late String name;

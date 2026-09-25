@@ -13,8 +13,10 @@ import '../fingerprint/fft.dart';
 class StftConstants {
   static const int frameLength = 4096;
   static const int hopLength = 1024;
-  static const int keptFrequencyBins = 1024; // model only sees/estimates up to this bin
-  static const int fullFrequencyBins = frameLength ~/ 2 + 1; // 2049 — the real rFFT output size
+  static const int keptFrequencyBins =
+      1024; // model only sees/estimates up to this bin
+  static const int fullFrequencyBins =
+      frameLength ~/ 2 + 1; // 2049 — the real rFFT output size
   static const int timeFramesPerSegment = 512;
   static const int channels = 2;
 
@@ -52,7 +54,9 @@ class StftProcessor {
   ChannelStft forwardStft(Float64List samples) {
     final window = _hannWindow(StftConstants.frameLength);
     final frameCount =
-        ((samples.length - StftConstants.frameLength) / StftConstants.hopLength).floor() + 1;
+        ((samples.length - StftConstants.frameLength) / StftConstants.hopLength)
+                .floor() +
+            1;
 
     final realFrames = <Float64List>[];
     final imagFrames = <Float64List>[];
@@ -63,7 +67,9 @@ class StftProcessor {
       final imag = Float64List(StftConstants.frameLength);
       for (int i = 0; i < StftConstants.frameLength; i++) {
         final sampleIndex = start + i;
-        real[i] = sampleIndex < samples.length ? samples[sampleIndex] * window[i] : 0.0;
+        real[i] = sampleIndex < samples.length
+            ? samples[sampleIndex] * window[i]
+            : 0.0;
       }
       Fft.transform(real, imag);
       realFrames.add(real.sublist(0, StftConstants.fullFrequencyBins));

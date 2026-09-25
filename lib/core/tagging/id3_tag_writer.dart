@@ -10,7 +10,13 @@ class TagEditFields {
   final int? trackNumber;
   final int? year;
 
-  const TagEditFields({this.title, this.artist, this.album, this.genre, this.trackNumber, this.year});
+  const TagEditFields(
+      {this.title,
+      this.artist,
+      this.album,
+      this.genre,
+      this.trackNumber,
+      this.year});
 }
 
 /// Writes ID3v2.3 tags to MP3 files by rebuilding the tag block entirely
@@ -65,7 +71,10 @@ class Id3TagWriter {
   }
 
   int _existingId3v2Size(Uint8List bytes) {
-    if (bytes.length < 10 || bytes[0] != 0x49 || bytes[1] != 0x44 || bytes[2] != 0x33) {
+    if (bytes.length < 10 ||
+        bytes[0] != 0x49 ||
+        bytes[1] != 0x44 ||
+        bytes[2] != 0x33) {
       return 0; // no existing ID3v2 tag
     }
     final tagSize = _synchsafeToInt(bytes.sublist(6, 10));
@@ -89,7 +98,8 @@ class Id3TagWriter {
       final bodyBytes = frameBody.toBytes();
 
       frames.add(ascii.encode(frameId));
-      frames.add(_uint32BigEndian(bodyBytes.length)); // ID3v2.3 frame size is a plain (non-synchsafe) uint32
+      frames.add(_uint32BigEndian(bodyBytes
+          .length)); // ID3v2.3 frame size is a plain (non-synchsafe) uint32
       frames.add([0x00, 0x00]); // frame flags
       frames.add(bodyBytes);
     }
@@ -98,7 +108,8 @@ class Id3TagWriter {
     addTextFrame('TPE1', fields.artist);
     addTextFrame('TALB', fields.album);
     addTextFrame('TCON', fields.genre);
-    if (fields.trackNumber != null) addTextFrame('TRCK', fields.trackNumber.toString());
+    if (fields.trackNumber != null)
+      addTextFrame('TRCK', fields.trackNumber.toString());
     if (fields.year != null) addTextFrame('TYER', fields.year.toString());
 
     final frameBytes = frames.toBytes();

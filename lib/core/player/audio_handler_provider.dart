@@ -6,5 +6,6 @@ import 'craunch_audio_handler.dart';
 /// AudioService.init(), so UI code can reach the handler via
 /// `ref.read(audioHandlerProvider)` without a global singleton variable.
 final audioHandlerProvider = Provider<CraunchAudioHandler>((ref) {
-  throw UnimplementedError('audioHandlerProvider must be overridden in main() after AudioService.init().');
+  throw UnimplementedError(
+      'audioHandlerProvider must be overridden in main() after AudioService.init().');
 });

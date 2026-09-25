@@ -19,7 +19,8 @@ class EqualizerScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: AppColors.backgroundDark,
         elevation: 0,
-        title: const Text('Equalizer', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text('Equalizer',
+            style: TextStyle(fontWeight: FontWeight.w700)),
       ),
       body: AnimatedBuilder(
         animation: handler.equalizer,
@@ -41,7 +42,8 @@ class EqualizerScreen extends ConsumerWidget {
                 opacity: state.enabled ? 1.0 : 0.4,
                 child: IgnorePointer(
                   ignoring: !state.enabled,
-                  child: _BandSliders(state: state, controller: handler.equalizer),
+                  child:
+                      _BandSliders(state: state, controller: handler.equalizer),
                 ),
               ),
               const SizedBox(height: 32),
@@ -49,7 +51,8 @@ class EqualizerScreen extends ConsumerWidget {
                 opacity: state.enabled ? 1.0 : 0.4,
                 child: IgnorePointer(
                   ignoring: !state.enabled,
-                  child: _EffectsSection(state: state, controller: handler.equalizer),
+                  child: _EffectsSection(
+                      state: state, controller: handler.equalizer),
                 ),
               ),
             ],
@@ -72,11 +75,15 @@ class _UnavailableState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.equalizer, size: 48, color: Colors.white.withOpacity(0.25)),
+            Icon(Icons.equalizer,
+                size: 48, color: Colors.white.withOpacity(0.25)),
             const SizedBox(height: 16),
             Text(
               'Equalizer unavailable',
-              style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 16, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  color: Colors.white.withOpacity(0.7),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
             Text(
@@ -84,7 +91,10 @@ class _UnavailableState extends StatelessWidget {
               'because the native equalizer requires a playback-path integration '
               'that isn\'t wired up yet on this platform.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white.withOpacity(0.45), fontSize: 13, height: 1.4),
+              style: TextStyle(
+                  color: Colors.white.withOpacity(0.45),
+                  fontSize: 13,
+                  height: 1.4),
             ),
           ],
         ),
@@ -103,7 +113,11 @@ class _EnabledToggle extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text('Equalizer', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
+        const Text('Equalizer',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w600)),
         Switch(
           value: state.enabled,
           onChanged: (value) => controller.setEnabled(value),
@@ -142,7 +156,8 @@ class _PresetSelector extends StatelessWidget {
               fontSize: 12.5,
               fontWeight: FontWeight.w600,
             ),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18), side: BorderSide.none),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18), side: BorderSide.none),
           );
         },
       ),
@@ -168,7 +183,8 @@ class _BandSliders extends StatelessWidget {
               children: [
                 Text(
                   '${band.gainDb >= 0 ? '+' : ''}${band.gainDb.toStringAsFixed(0)}',
-                  style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 10),
+                  style: TextStyle(
+                      color: Colors.white.withOpacity(0.5), fontSize: 10),
                 ),
                 Expanded(
                   child: RotatedBox(
@@ -176,8 +192,10 @@ class _BandSliders extends StatelessWidget {
                     child: SliderTheme(
                       data: SliderTheme.of(context).copyWith(
                         trackHeight: 3,
-                        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7),
-                        overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
+                        thumbShape:
+                            const RoundSliderThumbShape(enabledThumbRadius: 7),
+                        overlayShape:
+                            const RoundSliderOverlayShape(overlayRadius: 14),
                         activeTrackColor: accent.primary,
                         inactiveTrackColor: Colors.white.withOpacity(0.1),
                         thumbColor: accent.primary,
@@ -185,15 +203,20 @@ class _BandSliders extends StatelessWidget {
                       child: Slider(
                         min: state.minGainDb,
                         max: state.maxGainDb,
-                        value: band.gainDb.clamp(state.minGainDb, state.maxGainDb),
-                        onChanged: (value) => controller.setBandGain(band.index, value),
+                        value:
+                            band.gainDb.clamp(state.minGainDb, state.maxGainDb),
+                        onChanged: (value) =>
+                            controller.setBandGain(band.index, value),
                       ),
                     ),
                   ),
                 ),
                 Text(
                   band.displayLabel,
-                  style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 10.5, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      color: Colors.white.withOpacity(0.5),
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w600),
                 ),
               ],
             ),
@@ -215,7 +238,10 @@ class _EffectsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Bass Boost', style: TextStyle(color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w600)),
+        Text('Bass Boost',
+            style: TextStyle(
+                color: Colors.white.withOpacity(0.8),
+                fontWeight: FontWeight.w600)),
         Slider(
           min: 0,
           max: 1000,
@@ -226,17 +252,23 @@ class _EffectsSection extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           'Spatial Widening',
-          style: TextStyle(color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w600),
+          style: TextStyle(
+              color: Colors.white.withOpacity(0.8),
+              fontWeight: FontWeight.w600),
         ),
         Slider(
           min: 0,
           max: 1000,
           value: state.virtualizerStrength.toDouble(),
           activeColor: accent.primary,
-          onChanged: (value) => controller.setVirtualizerStrength(value.round()),
+          onChanged: (value) =>
+              controller.setVirtualizerStrength(value.round()),
         ),
         const SizedBox(height: 12),
-        Text('Reverb Space', style: TextStyle(color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w600)),
+        Text('Reverb Space',
+            style: TextStyle(
+                color: Colors.white.withOpacity(0.8),
+                fontWeight: FontWeight.w600)),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
@@ -249,8 +281,13 @@ class _EffectsSection extends StatelessWidget {
               onSelected: (_) => controller.setReverbPreset(preset),
               selectedColor: accent.secondary,
               backgroundColor: AppColors.surfaceDark,
-              labelStyle: TextStyle(color: isActive ? Colors.black : Colors.white.withOpacity(0.6), fontSize: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: BorderSide.none),
+              labelStyle: TextStyle(
+                  color:
+                      isActive ? Colors.black : Colors.white.withOpacity(0.6),
+                  fontSize: 12),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide.none),
             );
           }).toList(),
         ),

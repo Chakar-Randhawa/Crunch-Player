@@ -40,7 +40,10 @@ class EmbeddedArtworkExtractor {
     final raf = await file.open();
     try {
       final header = await _readBytes(raf, 0, 10);
-      if (header.length < 10 || header[0] != 0x49 || header[1] != 0x44 || header[2] != 0x33) {
+      if (header.length < 10 ||
+          header[0] != 0x49 ||
+          header[1] != 0x44 ||
+          header[2] != 0x33) {
         return EmbeddedArtworkResult.none;
       }
 
@@ -63,7 +66,8 @@ class EmbeddedArtworkExtractor {
 
         int frameSize;
         if (majorVersion == 2) {
-          frameSize = (body[offset] << 16) | (body[offset + 1] << 8) | body[offset + 2];
+          frameSize =
+              (body[offset] << 16) | (body[offset + 1] << 8) | body[offset + 2];
           offset += 3;
         } else {
           final sizeBytes = body.sublist(offset, offset + 4);
@@ -90,7 +94,8 @@ class EmbeddedArtworkExtractor {
   /// APIC layout: encoding(1) + MIME type (null-terminated, or 3-char code
   /// for the old "PIC" frame) + picture type(1) + description
   /// (null-terminated, in the frame's text encoding) + image data (rest).
-  EmbeddedArtworkResult _parseApicFrame(Uint8List frame, {required bool isCompactForm}) {
+  EmbeddedArtworkResult _parseApicFrame(Uint8List frame,
+      {required bool isCompactForm}) {
     if (frame.isEmpty) return EmbeddedArtworkResult.none;
     final encoding = frame[0];
     int offset = 1;
@@ -98,13 +103,16 @@ class EmbeddedArtworkExtractor {
     String mimeType;
     if (isCompactForm) {
       if (offset + 3 > frame.length) return EmbeddedArtworkResult.none;
-      final code = ascii.decode(frame.sublist(offset, offset + 3), allowInvalid: true).toUpperCase();
+      final code = ascii
+          .decode(frame.sublist(offset, offset + 3), allowInvalid: true)
+          .toUpperCase();
       mimeType = code == 'PNG' ? 'image/png' : 'image/jpeg';
       offset += 3;
     } else {
       final mimeEnd = frame.indexOf(0, offset);
       if (mimeEnd == -1) return EmbeddedArtworkResult.none;
-      mimeType = ascii.decode(frame.sublist(offset, mimeEnd), allowInvalid: true);
+      mimeType =
+          ascii.decode(frame.sublist(offset, mimeEnd), allowInvalid: true);
       offset = mimeEnd + 1;
     }
 
@@ -116,7 +124,8 @@ class EmbeddedArtworkExtractor {
     final isWide = encoding == 0x01 || encoding == 0x02;
     int descEnd = offset;
     if (isWide) {
-      while (descEnd + 1 < frame.length && !(frame[descEnd] == 0 && frame[descEnd + 1] == 0)) {
+      while (descEnd + 1 < frame.length &&
+          !(frame[descEnd] == 0 && frame[descEnd + 1] == 0)) {
         descEnd += 2;
       }
       offset = descEnd + 2;
@@ -128,7 +137,8 @@ class EmbeddedArtworkExtractor {
     }
 
     if (offset >= frame.length) return EmbeddedArtworkResult.none;
-    return EmbeddedArtworkResult(bytes: frame.sublist(offset), mimeType: mimeType);
+    return EmbeddedArtworkResult(
+        bytes: frame.sublist(offset), mimeType: mimeType);
   }
 
   // ---------------------------------------------------------------------
@@ -147,7 +157,8 @@ class EmbeddedArtworkExtractor {
       final meta = await _findMp4Box(raf, 'meta', udta.$1, udta.$1 + udta.$2);
       if (meta == null) return EmbeddedArtworkResult.none;
 
-      final ilst = await _findMp4Box(raf, 'ilst', meta.$1 + 4, meta.$1 + meta.$2);
+      final ilst =
+          await _findMp4Box(raf, 'ilst', meta.$1 + 4, meta.$1 + meta.$2);
       if (ilst == null) return EmbeddedArtworkResult.none;
 
       final covr = await _findMp4Box(raf, 'covr', ilst.$1, ilst.$1 + ilst.$2);
@@ -175,7 +186,8 @@ class EmbeddedArtworkExtractor {
     }
   }
 
-  Future<(int, int)?> _findMp4Box(RandomAccessFile raf, String fourCC, int start, int end) async {
+  Future<(int, int)?> _findMp4Box(
+      RandomAccessFile raf, String fourCC, int start, int end) async {
     int offset = start;
     while (offset + 8 <= end) {
       final header = await _readBytes(raf, offset, 8);
@@ -191,7 +203,8 @@ class EmbeddedArtworkExtractor {
       }
       if (boxSize < 8) break;
 
-      if (type == fourCC) return (contentStart, offset + boxSize - contentStart);
+      if (type == fourCC)
+        return (contentStart, offset + boxSize - contentStart);
       offset += boxSize;
     }
     return null;
@@ -204,7 +217,8 @@ class EmbeddedArtworkExtractor {
     final raf = await file.open();
     try {
       final marker = await _readBytes(raf, 0, 4);
-      if (marker.length < 4 || ascii.decode(marker) != 'fLaC') return EmbeddedArtworkResult.none;
+      if (marker.length < 4 || ascii.decode(marker) != 'fLaC')
+        return EmbeddedArtworkResult.none;
 
       int offset = 4;
       while (true) {
@@ -212,7 +226,8 @@ class EmbeddedArtworkExtractor {
         if (blockHeader.length < 4) break;
         final isLast = (blockHeader[0] & 0x80) != 0;
         final blockType = blockHeader[0] & 0x7F;
-        final blockLength = (blockHeader[1] << 16) | (blockHeader[2] << 8) | blockHeader[3];
+        final blockLength =
+            (blockHeader[1] << 16) | (blockHeader[2] << 8) | blockHeader[3];
         offset += 4;
 
         if (blockType == 6) {
@@ -235,26 +250,32 @@ class EmbeddedArtworkExtractor {
   EmbeddedArtworkResult _parseFlacPictureBlock(Uint8List block) {
     try {
       int offset = 4; // skip picture type
-      final mimeLen = ByteData.sublistView(block, offset, offset + 4).getUint32(0, Endian.big);
+      final mimeLen = ByteData.sublistView(block, offset, offset + 4)
+          .getUint32(0, Endian.big);
       offset += 4;
-      final mimeType = ascii.decode(block.sublist(offset, offset + mimeLen), allowInvalid: true);
+      final mimeType = ascii.decode(block.sublist(offset, offset + mimeLen),
+          allowInvalid: true);
       offset += mimeLen;
 
-      final descLen = ByteData.sublistView(block, offset, offset + 4).getUint32(0, Endian.big);
+      final descLen = ByteData.sublistView(block, offset, offset + 4)
+          .getUint32(0, Endian.big);
       offset += 4 + descLen;
 
       offset += 16; // width, height, depth, colors — not needed here
-      final dataLen = ByteData.sublistView(block, offset, offset + 4).getUint32(0, Endian.big);
+      final dataLen = ByteData.sublistView(block, offset, offset + 4)
+          .getUint32(0, Endian.big);
       offset += 4;
 
-      return EmbeddedArtworkResult(bytes: block.sublist(offset, offset + dataLen), mimeType: mimeType);
+      return EmbeddedArtworkResult(
+          bytes: block.sublist(offset, offset + dataLen), mimeType: mimeType);
     } catch (_) {
       return EmbeddedArtworkResult.none;
     }
   }
 
   // ---------------------------------------------------------------------
-  Future<Uint8List> _readBytes(RandomAccessFile raf, int position, int count) async {
+  Future<Uint8List> _readBytes(
+      RandomAccessFile raf, int position, int count) async {
     if (count <= 0) return Uint8List(0);
     await raf.setPosition(position);
     return raf.read(count);

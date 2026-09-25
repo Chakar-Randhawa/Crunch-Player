@@ -23,7 +23,8 @@ class DynamicAccentController extends ValueNotifier<AppAccent> {
   int? _lastProcessedAlbumId;
 
   DynamicAccentController({EmbeddedArtworkExtractor? artworkExtractor})
-      : _artworkExtractor = artworkExtractor ?? const EmbeddedArtworkExtractor(),
+      : _artworkExtractor =
+            artworkExtractor ?? const EmbeddedArtworkExtractor(),
         super(AppAccent.fallback);
 
   Future<void> onTrackChanged(Track? track) async {
@@ -38,7 +39,8 @@ class DynamicAccentController extends ValueNotifier<AppAccent> {
     }
 
     final isar = await IsarService.instance.open();
-    final cachedAlbum = track.albumId != -1 ? await isar.albums.get(track.albumId) : null;
+    final cachedAlbum =
+        track.albumId != -1 ? await isar.albums.get(track.albumId) : null;
 
     if (cachedAlbum != null &&
         cachedAlbum.paletteColorPrimary != null &&
@@ -80,7 +82,8 @@ class DynamicAccentController extends ValueNotifier<AppAccent> {
         maximumColorCount: 24,
       );
 
-      final vibrant = palette.vibrantColor?.color ?? palette.dominantColor?.color;
+      final vibrant =
+          palette.vibrantColor?.color ?? palette.dominantColor?.color;
       final muted = palette.mutedColor?.color ??
           palette.darkVibrantColor?.color ??
           palette.lightVibrantColor?.color;

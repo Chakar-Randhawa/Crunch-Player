@@ -94,7 +94,8 @@ Future<void> _runScan(ScanRequest request) async {
       // minimum. A file whose duration couldn't be determined (some AAC/
       // OGG edge cases) is kept rather than dropped, since size already
       // passed the floor check above.
-      if (tags.durationMs != null && tags.durationMs! < config.minTrackDuration.inMilliseconds) {
+      if (tags.durationMs != null &&
+          tags.durationMs! < config.minTrackDuration.inMilliseconds) {
         skipped++;
         continue;
       }
@@ -149,7 +150,8 @@ Future<void> _runScan(ScanRequest request) async {
     progress = progress.copyWith(phase: ScanPhase.complete);
     sendPort.send(progress);
   } catch (e) {
-    sendPort.send(progress.copyWith(phase: ScanPhase.error, errorMessage: e.toString()));
+    sendPort.send(
+        progress.copyWith(phase: ScanPhase.error, errorMessage: e.toString()));
   }
 }
 

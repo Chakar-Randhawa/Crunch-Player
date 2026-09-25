@@ -17,7 +17,9 @@ class EqualizerBand {
   String get displayLabel {
     if (centerFrequencyHz >= 1000) {
       final khz = centerFrequencyHz / 1000;
-      return khz == khz.roundToDouble() ? '${khz.toInt()}kHz' : '${khz.toStringAsFixed(1)}kHz';
+      return khz == khz.roundToDouble()
+          ? '${khz.toInt()}kHz'
+          : '${khz.toStringAsFixed(1)}kHz';
     }
     return '${centerFrequencyHz}Hz';
   }
@@ -71,10 +73,27 @@ class EqualizerPreset {
     [0, 0, 0, 0, 0, 0.15, 0.35, 0.55, 0.7, 0.8],
   );
 
-  static const all = [flat, rock, pop, jazz, classical, bassBoostCurve, vocal, trebleBoost];
+  static const all = [
+    flat,
+    rock,
+    pop,
+    jazz,
+    classical,
+    bassBoostCurve,
+    vocal,
+    trebleBoost
+  ];
 }
 
-enum ReverbPreset { none, smallRoom, mediumRoom, largeRoom, mediumHall, largeHall, plate }
+enum ReverbPreset {
+  none,
+  smallRoom,
+  mediumRoom,
+  largeRoom,
+  mediumHall,
+  largeHall,
+  plate
+}
 
 /// Full snapshot of equalizer state as surfaced to the UI. Held by
 /// [EqualizerController] and rebuilt (not mutated) on every change so
@@ -86,8 +105,10 @@ class EqualizerState {
   final double minGainDb;
   final double maxGainDb;
   final String activePresetName; // "Custom" once the user drags a slider
-  final int bassBoostStrength; // 0-1000, matches Android BassBoost's native range
-  final int virtualizerStrength; // 0-1000, matches Android Virtualizer's native range
+  final int
+      bassBoostStrength; // 0-1000, matches Android BassBoost's native range
+  final int
+      virtualizerStrength; // 0-1000, matches Android Virtualizer's native range
   final ReverbPreset reverbPreset;
 
   const EqualizerState({

@@ -46,14 +46,17 @@ class LibraryLinker {
           ..primaryArtistName = _mostCommonArtist(entry.value)
           ..year = _mostCommonYear(entry.value)
           ..trackCount = entry.value.length
-          ..totalDurationMs = entry.value.fold(0, (sum, t) => sum + t.durationMs)
+          ..totalDurationMs =
+              entry.value.fold(0, (sum, t) => sum + t.durationMs)
           ..artworkSourceTrackPath = sample.filePath;
         final id = await isar.albums.put(album);
         albumIdByKey[entry.key] = id;
       }
 
       for (final entry in artistBuckets.entries) {
-        final albumKeysForArtist = entry.value.map((t) => _albumKey(t.albumName, t.artistName)).toSet();
+        final albumKeysForArtist = entry.value
+            .map((t) => _albumKey(t.albumName, t.artistName))
+            .toSet();
         final artist = Artist()
           ..nameKey = entry.key
           ..name = entry.value.first.artistName
@@ -89,8 +92,10 @@ class LibraryLinker {
       }
 
       for (final track in tracks) {
-        track.albumId = albumIdByKey[_albumKey(track.albumName, track.artistName)] ?? -1;
-        track.artistId = artistIdByKey[track.artistName.trim().toLowerCase()] ?? -1;
+        track.albumId =
+            albumIdByKey[_albumKey(track.albumName, track.artistName)] ?? -1;
+        track.artistId =
+            artistIdByKey[track.artistName.trim().toLowerCase()] ?? -1;
         track.folderId = folderIdByPath[p.dirname(track.filePath)] ?? -1;
       }
       await isar.tracks.putAll(tracks);

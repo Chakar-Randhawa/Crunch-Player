@@ -37,11 +37,13 @@ class _QueueScreenState extends ConsumerState<QueueScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.backgroundDark,
         elevation: 0,
-        title: const Text('Up Next', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text('Up Next',
+            style: TextStyle(fontWeight: FontWeight.w700)),
       ),
       body: _queue.isEmpty
           ? Center(
-              child: Text('Queue is empty', style: TextStyle(color: Colors.white.withOpacity(0.5))),
+              child: Text('Queue is empty',
+                  style: TextStyle(color: Colors.white.withOpacity(0.5))),
             )
           : ReorderableListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -74,23 +76,31 @@ class _QueueScreenState extends ConsumerState<QueueScreen> {
 
                 return Dismissible(
                   key: ValueKey('${track.filePath}_$index'),
-                  direction: isCurrent ? DismissDirection.none : DismissDirection.endToStart,
+                  direction: isCurrent
+                      ? DismissDirection.none
+                      : DismissDirection.endToStart,
                   background: Container(
                     color: Colors.red.withOpacity(0.25),
                     alignment: Alignment.centerRight,
                     padding: const EdgeInsets.only(right: 24),
-                    child: const Icon(Icons.delete_outline, color: Colors.white70),
+                    child:
+                        const Icon(Icons.delete_outline, color: Colors.white70),
                   ),
                   onDismissed: (_) => _handleRemove(index),
                   child: Container(
                     key: ValueKey('row_${track.filePath}_$index'),
-                    color: isCurrent ? accent.primary.withOpacity(0.12) : Colors.transparent,
+                    color: isCurrent
+                        ? accent.primary.withOpacity(0.12)
+                        : Colors.transparent,
                     child: ListTile(
                       leading: isCurrent
-                          ? Icon(Icons.graphic_eq, color: accent.primary, size: 20)
+                          ? Icon(Icons.graphic_eq,
+                              color: accent.primary, size: 20)
                           : Text(
                               '${index + 1}',
-                              style: TextStyle(color: Colors.white.withOpacity(0.35), fontSize: 13),
+                              style: TextStyle(
+                                  color: Colors.white.withOpacity(0.35),
+                                  fontSize: 13),
                             ),
                       title: Text(
                         track.title,
@@ -98,18 +108,22 @@ class _QueueScreenState extends ConsumerState<QueueScreen> {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: isCurrent ? accent.primary : Colors.white,
-                          fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
+                          fontWeight:
+                              isCurrent ? FontWeight.w700 : FontWeight.w500,
                         ),
                       ),
                       subtitle: Text(
                         track.artistName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 12.5),
+                        style: TextStyle(
+                            color: Colors.white.withOpacity(0.5),
+                            fontSize: 12.5),
                       ),
                       trailing: ReorderableDragStartListener(
                         index: index,
-                        child: Icon(Icons.drag_handle, color: Colors.white.withOpacity(0.3)),
+                        child: Icon(Icons.drag_handle,
+                            color: Colors.white.withOpacity(0.3)),
                       ),
                     ),
                   ),

@@ -24,7 +24,8 @@ class PcmSource {
 
   Future<Float64List> decodeToMonoFloat(String audioFilePath) async {
     final tempDir = await getTemporaryDirectory();
-    final pcmPath = p.join(tempDir.path, '${p.basenameWithoutExtension(audioFilePath)}_fp.wav');
+    final pcmPath = p.join(
+        tempDir.path, '${p.basenameWithoutExtension(audioFilePath)}_fp.wav');
 
     await _decoder.decodeToPcm(audioFilePath, pcmPath);
     final pcm = await _wavCodec.read(pcmPath);
@@ -32,7 +33,8 @@ class PcmSource {
     await File(pcmPath).delete().catchError((_) => File(pcmPath));
 
     if (pcm.channelCount == 1) {
-      return Float64List.fromList(pcm.samples.map((s) => s.toDouble()).toList());
+      return Float64List.fromList(
+          pcm.samples.map((s) => s.toDouble()).toList());
     }
 
     // Downmix to mono by averaging channels — fingerprint matching only

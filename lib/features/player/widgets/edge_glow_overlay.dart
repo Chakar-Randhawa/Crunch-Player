@@ -16,13 +16,15 @@ import '../../../core/theme/app_theme.dart';
 class EdgeGlowStyle {
   final String name;
   final int waveCount;
-  final double speed; // radians/sec equivalent, applied to the animation's 0..1 t
+  final double
+      speed; // radians/sec equivalent, applied to the animation's 0..1 t
   final double thicknessBase;
   final double thicknessPulseAmount;
   final bool reverseDirection;
   final bool doubleRing;
   final bool sparkle;
-  final double cornerEmphasis; // 0 = even glow, 1 = glow concentrates at corners
+  final double
+      cornerEmphasis; // 0 = even glow, 1 = glow concentrates at corners
 
   const EdgeGlowStyle({
     required this.name,
@@ -37,16 +39,75 @@ class EdgeGlowStyle {
   });
 
   static const List<EdgeGlowStyle> presets = [
-    EdgeGlowStyle(name: 'Pulse', waveCount: 1, speed: 0.6, thicknessBase: 3, thicknessPulseAmount: 2.5),
-    EdgeGlowStyle(name: 'Ripple', waveCount: 3, speed: 1.0, thicknessBase: 2, thicknessPulseAmount: 1.5),
-    EdgeGlowStyle(name: 'Comet', waveCount: 1, speed: 1.6, thicknessBase: 4, thicknessPulseAmount: 0.5, cornerEmphasis: 0.6),
-    EdgeGlowStyle(name: 'Dual Orbit', waveCount: 2, speed: 0.9, thicknessBase: 2.5, thicknessPulseAmount: 1.0, doubleRing: true),
-    EdgeGlowStyle(name: 'Reverse Sweep', waveCount: 1, speed: 1.1, thicknessBase: 3, thicknessPulseAmount: 1.8, reverseDirection: true),
-    EdgeGlowStyle(name: 'Starlight', waveCount: 4, speed: 0.5, thicknessBase: 2, thicknessPulseAmount: 1.0, sparkle: true),
-    EdgeGlowStyle(name: 'Corner Bloom', waveCount: 2, speed: 0.7, thicknessBase: 3, thicknessPulseAmount: 2.0, cornerEmphasis: 1.0),
-    EdgeGlowStyle(name: 'Slow Breathe', waveCount: 1, speed: 0.25, thicknessBase: 5, thicknessPulseAmount: 3.5),
-    EdgeGlowStyle(name: 'Twin Comet', waveCount: 2, speed: 1.8, thicknessBase: 3, thicknessPulseAmount: 0.8, doubleRing: true, cornerEmphasis: 0.3),
-    EdgeGlowStyle(name: 'Sparkle Ripple', waveCount: 5, speed: 1.3, thicknessBase: 2, thicknessPulseAmount: 1.2, sparkle: true, reverseDirection: true),
+    EdgeGlowStyle(
+        name: 'Pulse',
+        waveCount: 1,
+        speed: 0.6,
+        thicknessBase: 3,
+        thicknessPulseAmount: 2.5),
+    EdgeGlowStyle(
+        name: 'Ripple',
+        waveCount: 3,
+        speed: 1.0,
+        thicknessBase: 2,
+        thicknessPulseAmount: 1.5),
+    EdgeGlowStyle(
+        name: 'Comet',
+        waveCount: 1,
+        speed: 1.6,
+        thicknessBase: 4,
+        thicknessPulseAmount: 0.5,
+        cornerEmphasis: 0.6),
+    EdgeGlowStyle(
+        name: 'Dual Orbit',
+        waveCount: 2,
+        speed: 0.9,
+        thicknessBase: 2.5,
+        thicknessPulseAmount: 1.0,
+        doubleRing: true),
+    EdgeGlowStyle(
+        name: 'Reverse Sweep',
+        waveCount: 1,
+        speed: 1.1,
+        thicknessBase: 3,
+        thicknessPulseAmount: 1.8,
+        reverseDirection: true),
+    EdgeGlowStyle(
+        name: 'Starlight',
+        waveCount: 4,
+        speed: 0.5,
+        thicknessBase: 2,
+        thicknessPulseAmount: 1.0,
+        sparkle: true),
+    EdgeGlowStyle(
+        name: 'Corner Bloom',
+        waveCount: 2,
+        speed: 0.7,
+        thicknessBase: 3,
+        thicknessPulseAmount: 2.0,
+        cornerEmphasis: 1.0),
+    EdgeGlowStyle(
+        name: 'Slow Breathe',
+        waveCount: 1,
+        speed: 0.25,
+        thicknessBase: 5,
+        thicknessPulseAmount: 3.5),
+    EdgeGlowStyle(
+        name: 'Twin Comet',
+        waveCount: 2,
+        speed: 1.8,
+        thicknessBase: 3,
+        thicknessPulseAmount: 0.8,
+        doubleRing: true,
+        cornerEmphasis: 0.3),
+    EdgeGlowStyle(
+        name: 'Sparkle Ripple',
+        waveCount: 5,
+        speed: 1.3,
+        thicknessBase: 2,
+        thicknessPulseAmount: 1.2,
+        sparkle: true,
+        reverseDirection: true),
   ];
 }
 
@@ -63,7 +124,12 @@ class EdgeGlowOverlay extends StatefulWidget {
   const EdgeGlowOverlay({
     super.key,
     required this.child,
-    this.style = const EdgeGlowStyle(name: 'Pulse', waveCount: 1, speed: 0.6, thicknessBase: 3, thicknessPulseAmount: 2.5),
+    this.style = const EdgeGlowStyle(
+        name: 'Pulse',
+        waveCount: 1,
+        speed: 0.6,
+        thicknessBase: 3,
+        thicknessPulseAmount: 2.5),
     this.enabled = true,
   });
 
@@ -71,13 +137,16 @@ class EdgeGlowOverlay extends StatefulWidget {
   State<EdgeGlowOverlay> createState() => _EdgeGlowOverlayState();
 }
 
-class _EdgeGlowOverlayState extends State<EdgeGlowOverlay> with SingleTickerProviderStateMixin {
+class _EdgeGlowOverlayState extends State<EdgeGlowOverlay>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 4))..repeat();
+    _controller =
+        AnimationController(vsync: this, duration: const Duration(seconds: 4))
+          ..repeat();
   }
 
   @override
@@ -117,12 +186,14 @@ class _EdgeGlowPainter extends CustomPainter {
   final EdgeGlowStyle style;
   final AppAccent accent;
 
-  _EdgeGlowPainter({required this.t, required this.style, required this.accent});
+  _EdgeGlowPainter(
+      {required this.t, required this.style, required this.accent});
 
   @override
   void paint(Canvas canvas, Size size) {
     final rect = Rect.fromLTWH(0, 0, size.width, size.height);
-    final perimeterPath = Path()..addRRect(RRect.fromRectAndRadius(rect, const Radius.circular(0)));
+    final perimeterPath = Path()
+      ..addRRect(RRect.fromRectAndRadius(rect, const Radius.circular(0)));
     final metrics = perimeterPath.computeMetrics().first;
     final perimeterLength = metrics.length;
 
@@ -131,7 +202,8 @@ class _EdgeGlowPainter extends CustomPainter {
 
     _drawRing(canvas, metrics, perimeterLength, phase, opacity: 1.0);
     if (style.doubleRing) {
-      _drawRing(canvas, metrics, perimeterLength, phase + math.pi, opacity: 0.55);
+      _drawRing(canvas, metrics, perimeterLength, phase + math.pi,
+          opacity: 0.55);
     }
     if (style.sparkle) {
       _drawSparkles(canvas, metrics, perimeterLength, phase);
@@ -158,9 +230,11 @@ class _EdgeGlowPainter extends CustomPainter {
       final cornerBoost = style.cornerEmphasis > 0
           ? style.cornerEmphasis * _cornerProximity(fraction)
           : 0.0;
-      final intensity = (wave * (1 - style.cornerEmphasis) + cornerBoost).clamp(0.0, 1.0);
+      final intensity =
+          (wave * (1 - style.cornerEmphasis) + cornerBoost).clamp(0.0, 1.0);
 
-      final thickness = style.thicknessBase + style.thicknessPulseAmount * intensity;
+      final thickness =
+          style.thicknessBase + style.thicknessPulseAmount * intensity;
       final color = Color.lerp(accent.primary, accent.secondary, wave)!
           .withOpacity((0.15 + 0.65 * intensity) * opacity);
 
@@ -175,8 +249,10 @@ class _EdgeGlowPainter extends CustomPainter {
     }
   }
 
-  void _drawSparkles(Canvas canvas, ui.PathMetric metrics, double perimeterLength, double phase) {
-    final random = math.Random(42); // fixed seed: stable sparkle positions, only their twinkle animates
+  void _drawSparkles(Canvas canvas, ui.PathMetric metrics,
+      double perimeterLength, double phase) {
+    final random = math.Random(
+        42); // fixed seed: stable sparkle positions, only their twinkle animates
     const sparkleCount = 18;
     for (int i = 0; i < sparkleCount; i++) {
       final basePosition = random.nextDouble();

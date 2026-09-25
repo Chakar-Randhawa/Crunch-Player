@@ -26,7 +26,8 @@ class QueueManager {
   /// order, which differs from original order whenever shuffle is on.
   /// Drag-and-drop reordering operates on *this* list's indices via
   /// [reorderInPlayOrder], not the original order's.
-  List<Track> get queueInPlayOrder => List.unmodifiable(_playOrder.map((i) => _originalOrder[i]));
+  List<Track> get queueInPlayOrder =>
+      List.unmodifiable(_playOrder.map((i) => _originalOrder[i]));
 
   int get currentPlayOrderPosition => _positionInPlayOrder;
 
@@ -34,7 +35,8 @@ class QueueManager {
   CraunchRepeatMode get repeatMode => _repeatMode;
 
   Track? get currentTrack {
-    if (_positionInPlayOrder < 0 || _positionInPlayOrder >= _playOrder.length) return null;
+    if (_positionInPlayOrder < 0 || _positionInPlayOrder >= _playOrder.length)
+      return null;
     return _originalOrder[_playOrder[_positionInPlayOrder]];
   }
 
@@ -44,13 +46,15 @@ class QueueManager {
           : -1;
 
   bool get hasNext {
-    if (_repeatMode == CraunchRepeatMode.repeatAll || _repeatMode == CraunchRepeatMode.repeatOne) {
+    if (_repeatMode == CraunchRepeatMode.repeatAll ||
+        _repeatMode == CraunchRepeatMode.repeatOne) {
       return _playOrder.isNotEmpty;
     }
     return _positionInPlayOrder + 1 < _playOrder.length;
   }
 
-  bool get hasPrevious => _positionInPlayOrder > 0 || _repeatMode == CraunchRepeatMode.repeatAll;
+  bool get hasPrevious =>
+      _positionInPlayOrder > 0 || _repeatMode == CraunchRepeatMode.repeatAll;
 
   /// Replaces the queue entirely and starts playback intent at
   /// [startIndex] within [tracks] (index into the list as given, before
@@ -59,7 +63,9 @@ class QueueManager {
     _originalOrder = List.of(tracks);
     _playOrder = List.generate(_originalOrder.length, (i) => i);
     if (_shuffleEnabled) _shufflePlayOrderKeepingCurrentFirst(startIndex);
-    _positionInPlayOrder = _shuffleEnabled ? 0 : startIndex.clamp(0, max(_playOrder.length - 1, 0));
+    _positionInPlayOrder = _shuffleEnabled
+        ? 0
+        : startIndex.clamp(0, max(_playOrder.length - 1, 0));
   }
 
   void appendToQueue(Track track) {
@@ -80,7 +86,8 @@ class QueueManager {
     _playOrder = _playOrder.map((i) => i > originalIndex ? i - 1 : i).toList();
 
     if (removedWasCurrent) {
-      _positionInPlayOrder = _positionInPlayOrder.clamp(0, max(_playOrder.length - 1, 0));
+      _positionInPlayOrder =
+          _positionInPlayOrder.clamp(0, max(_playOrder.length - 1, 0));
     } else {
       _positionInPlayOrder = _playOrder.indexOf(currentOriginalIndex);
     }
@@ -102,7 +109,8 @@ class QueueManager {
     final movingCurrent = fromVisualIndex == _positionInPlayOrder;
 
     final item = _playOrder.removeAt(fromVisualIndex);
-    final insertAt = toVisualIndex > fromVisualIndex ? toVisualIndex - 1 : toVisualIndex;
+    final insertAt =
+        toVisualIndex > fromVisualIndex ? toVisualIndex - 1 : toVisualIndex;
     _playOrder.insert(insertAt.clamp(0, _playOrder.length), item);
 
     if (movingCurrent) {

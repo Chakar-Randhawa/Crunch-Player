@@ -47,7 +47,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.backgroundDark,
         elevation: 0,
-        title: const Text('Settings', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text('Settings',
+            style: TextStyle(fontWeight: FontWeight.w700)),
       ),
       body: ListView(
         children: [
@@ -55,37 +56,39 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           _buildCrossfadeTile(accent),
           ListTile(
             leading: const Icon(Icons.equalizer, color: Colors.white70),
-            title: const Text('Equalizer', style: TextStyle(color: Colors.white)),
-            trailing: Icon(Icons.chevron_right, color: Colors.white.withOpacity(0.3)),
+            title:
+                const Text('Equalizer', style: TextStyle(color: Colors.white)),
+            trailing:
+                Icon(Icons.chevron_right, color: Colors.white.withOpacity(0.3)),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const EqualizerScreen()),
             ),
           ),
           const Divider(color: Colors.white12, height: 32),
-
           _SectionHeader(title: 'Edge Lighting'),
           _buildEdgeGlowStylePicker(accent),
           SwitchListTile(
             value: _edgeGlowEnabledInApp,
             onChanged: (value) => setState(() => _edgeGlowEnabledInApp = value),
-            title: const Text('Glow while app is open', style: TextStyle(color: Colors.white)),
+            title: const Text('Glow while app is open',
+                style: TextStyle(color: Colors.white)),
             activeColor: accent.primary,
           ),
           _buildOverlayTile(accent),
           const Divider(color: Colors.white12, height: 32),
-
           _SectionHeader(title: 'Sleep Timer'),
           _buildSleepTimerTiles(accent),
           const Divider(color: Colors.white12, height: 32),
-
           _SectionHeader(title: 'Library'),
           _buildRescanTile(),
           const Divider(color: Colors.white12, height: 32),
-
           _SectionHeader(title: 'About'),
           const ListTile(
-            title: Text('CRaunch Player', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
-            subtitle: Text('Founded by Chakar Randhawa', style: TextStyle(color: Colors.white54)),
+            title: Text('CRaunch Player',
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.w600)),
+            subtitle: Text('Founded by Chakar Randhawa',
+                style: TextStyle(color: Colors.white54)),
           ),
           const SizedBox(height: 24),
         ],
@@ -104,7 +107,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             children: [
               const Text('Crossfade', style: TextStyle(color: Colors.white)),
               Text(
-                _crossfadeSeconds == 0 ? 'Gapless' : '${_crossfadeSeconds.toStringAsFixed(0)}s',
+                _crossfadeSeconds == 0
+                    ? 'Gapless'
+                    : '${_crossfadeSeconds.toStringAsFixed(0)}s',
                 style: TextStyle(color: Colors.white.withOpacity(0.6)),
               ),
             ],
@@ -116,13 +121,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             value: _crossfadeSeconds,
             activeColor: accent.primary,
             onChanged: (value) => setState(() => _crossfadeSeconds = value),
-            onChangeEnd: (value) => ref.read(audioHandlerProvider).setCrossfadeSeconds(value),
+            onChangeEnd: (value) =>
+                ref.read(audioHandlerProvider).setCrossfadeSeconds(value),
           ),
           Text(
             _crossfadeSeconds == 0
                 ? 'True gapless playback — zero-delay transitions between tracks.'
                 : 'Tracks blend into each other over ${_crossfadeSeconds.toStringAsFixed(0)} seconds.',
-            style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12),
+            style:
+                TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12),
           ),
         ],
       ),
@@ -153,7 +160,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               color: isActive ? Colors.white : Colors.white.withOpacity(0.6),
               fontSize: 12,
             ),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: BorderSide.none),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16), side: BorderSide.none),
           );
         },
       ),
@@ -163,7 +171,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget _buildOverlayTile(AppAccent accent) {
     if (!_overlayChannel.isSupportedPlatform) {
       return ListTile(
-        title: const Text('Glow over other apps', style: TextStyle(color: Colors.white)),
+        title: const Text('Glow over other apps',
+            style: TextStyle(color: Colors.white)),
         subtitle: Text(
           'Not available on this platform — see OverlayChannel\'s doc comment.',
           style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12),
@@ -174,7 +183,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return SwitchListTile(
       value: _overlayRunning,
       onChanged: (value) => _toggleOverlay(value, accent),
-      title: const Text('Glow over other apps', style: TextStyle(color: Colors.white)),
+      title: const Text('Glow over other apps',
+          style: TextStyle(color: Colors.white)),
       subtitle: Text(
         'Requires the "draw over other apps" permission.',
         style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12),
@@ -197,28 +207,36 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         context: context,
         builder: (context) => AlertDialog(
           backgroundColor: AppColors.surfaceElevatedDark,
-          title: const Text('Permission needed', style: TextStyle(color: Colors.white)),
+          title: const Text('Permission needed',
+              style: TextStyle(color: Colors.white)),
           content: const Text(
             'Drawing the glow over other apps requires the "draw over other apps" '
             'permission. You\'ll be taken to Settings to grant it.',
             style: TextStyle(color: Colors.white70),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-            TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Open Settings')),
+            TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel')),
+            TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Open Settings')),
           ],
         ),
       );
-      if (shouldOpenSettings == true) await _overlayChannel.openPermissionSettings();
+      if (shouldOpenSettings == true)
+        await _overlayChannel.openPermissionSettings();
       return;
     }
 
-    final started = await _overlayChannel.start(primary: accent.primary, secondary: accent.secondary);
+    final started = await _overlayChannel.start(
+        primary: accent.primary, secondary: accent.secondary);
     setState(() => _overlayRunning = started);
   }
 
   Future<void> _updateOverlayColors(AppAccent accent) async {
-    await _overlayChannel.updateColors(primary: accent.primary, secondary: accent.secondary);
+    await _overlayChannel.updateColors(
+        primary: accent.primary, secondary: accent.secondary);
   }
 
   Widget _buildSleepTimerTiles(AppAccent accent) {
@@ -245,16 +263,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       children: [
         ListTile(
           leading: const Icon(Icons.timer_outlined, color: Colors.white70),
-          title: const Text('Stop after a set time', style: TextStyle(color: Colors.white)),
+          title: const Text('Stop after a set time',
+              style: TextStyle(color: Colors.white)),
           onTap: () => _showFixedDurationPicker(handler),
         ),
         ListTile(
           leading: const Icon(Icons.vibration, color: Colors.white70),
-          title: const Text('Stop when device is still', style: TextStyle(color: Colors.white)),
+          title: const Text('Stop when device is still',
+              style: TextStyle(color: Colors.white)),
           subtitle: Text(
             'Detects when the phone stops moving (e.g. set down for the night) '
             'rather than a fixed countdown.',
-            style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12),
+            style:
+                TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12),
           ),
           onTap: () => handler.sleepTimer.startMovementBased(),
         ),
@@ -271,7 +292,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [15, 30, 45, 60, 90].map((m) {
             return ListTile(
-              title: Text('$m minutes', style: const TextStyle(color: Colors.white)),
+              title: Text('$m minutes',
+                  style: const TextStyle(color: Colors.white)),
               onTap: () => Navigator.pop(context, m),
             );
           }).toList(),
@@ -286,7 +308,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget _buildRescanTile() {
     return ListTile(
       leading: const Icon(Icons.refresh, color: Colors.white70),
-      title: const Text('Rescan library', style: TextStyle(color: Colors.white)),
+      title:
+          const Text('Rescan library', style: TextStyle(color: Colors.white)),
       subtitle: Text(
         'Re-indexes your music folders for new or changed files.',
         style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12),
@@ -303,7 +326,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     // '/storage/emulated/0/Music' as the conventional default Android
     // scan root rather than hardcoding a picker UI this settings screen
     // doesn't otherwise need.
-    final stream = _storageScanner.startScan(const ['/storage/emulated/0/Music'], config: const ScanConfig());
+    final stream = _storageScanner.startScan(
+        const ['/storage/emulated/0/Music'],
+        config: const ScanConfig());
 
     if (!mounted) return;
     showDialog(
@@ -313,7 +338,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         stream: stream,
         builder: (context, snapshot) {
           final progress = snapshot.data;
-          if (progress == null || progress.phase == ScanPhase.complete || progress.phase == ScanPhase.error) {
+          if (progress == null ||
+              progress.phase == ScanPhase.complete ||
+              progress.phase == ScanPhase.error) {
             if (progress != null) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (mounted) Navigator.of(context, rootNavigator: true).pop();
@@ -322,7 +349,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           }
           return AlertDialog(
             backgroundColor: AppColors.surfaceElevatedDark,
-            title: const Text('Scanning library', style: TextStyle(color: Colors.white)),
+            title: const Text('Scanning library',
+                style: TextStyle(color: Colors.white)),
             content: Text(
               progress == null
                   ? 'Starting…'
@@ -361,7 +389,11 @@ class _SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
       child: Text(
         title.toUpperCase(),
-        style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 0.8),
+        style: TextStyle(
+            color: Colors.white.withOpacity(0.4),
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.8),
       ),
     );
   }

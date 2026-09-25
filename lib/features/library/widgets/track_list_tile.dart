@@ -51,7 +51,8 @@ class TrackListTile extends StatelessWidget {
                     '${track.artistName} • ${track.albumName}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 12.5, color: Colors.white.withOpacity(0.55)),
+                    style: TextStyle(
+                        fontSize: 12.5, color: Colors.white.withOpacity(0.55)),
                   ),
                 ],
               ),
@@ -59,20 +60,24 @@ class TrackListTile extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               _formatDuration(track.durationMs),
-              style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.45)),
+              style: TextStyle(
+                  fontSize: 12, color: Colors.white.withOpacity(0.45)),
             ),
             IconButton(
               splashRadius: 20,
               icon: Icon(
                 track.isFavorite ? Icons.favorite : Icons.favorite_border,
                 size: 19,
-                color: track.isFavorite ? accent.primary : Colors.white.withOpacity(0.4),
+                color: track.isFavorite
+                    ? accent.primary
+                    : Colors.white.withOpacity(0.4),
               ),
               onPressed: onFavoriteToggle,
             ),
             IconButton(
               splashRadius: 20,
-              icon: Icon(Icons.more_vert, size: 19, color: Colors.white.withOpacity(0.4)),
+              icon: Icon(Icons.more_vert,
+                  size: 19, color: Colors.white.withOpacity(0.4)),
               onPressed: onMoreTap,
             ),
           ],
@@ -108,7 +113,10 @@ class _ArtworkPlaceholder extends StatelessWidget {
         gradient: LinearGradient(
           colors: isPlaying
               ? [accent.primary, accent.secondary]
-              : [Colors.white.withOpacity(0.08), Colors.white.withOpacity(0.04)],
+              : [
+                  Colors.white.withOpacity(0.08),
+                  Colors.white.withOpacity(0.04)
+                ],
         ),
       ),
       child: Icon(

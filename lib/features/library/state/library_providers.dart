@@ -10,7 +10,8 @@ enum LibrarySortOrder { titleAsc, artistAsc, dateAddedDesc, playCountDesc }
 
 final isarProvider = FutureProvider<Isar>((ref) => IsarService.instance.open());
 
-final librarySortOrderProvider = StateProvider<LibrarySortOrder>((ref) => LibrarySortOrder.titleAsc);
+final librarySortOrderProvider =
+    StateProvider<LibrarySortOrder>((ref) => LibrarySortOrder.titleAsc);
 
 final libraryQueryProvider = StateProvider<String>((ref) => '');
 
@@ -73,8 +74,33 @@ class AzIndex {
   const AzIndex(this.letterToFirstIndex);
 
   static const List<String> alphabet = [
-    '#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+    '#',
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'I',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
+    'O',
+    'P',
+    'Q',
+    'R',
+    'S',
+    'T',
+    'U',
+    'V',
+    'W',
+    'X',
+    'Y',
+    'Z',
   ];
 }
 
@@ -84,9 +110,12 @@ final azIndexProvider = Provider<AzIndex>((ref) {
   final tracks = tracksAsync.value ?? const <Track>[];
 
   final map = <String, int>{};
-  if (sortOrder == LibrarySortOrder.titleAsc || sortOrder == LibrarySortOrder.artistAsc) {
+  if (sortOrder == LibrarySortOrder.titleAsc ||
+      sortOrder == LibrarySortOrder.artistAsc) {
     for (int i = 0; i < tracks.length; i++) {
-      final key = sortOrder == LibrarySortOrder.titleAsc ? tracks[i].title : tracks[i].artistName;
+      final key = sortOrder == LibrarySortOrder.titleAsc
+          ? tracks[i].title
+          : tracks[i].artistName;
       final letter = _leadingLetter(key);
       map.putIfAbsent(letter, () => i);
     }

@@ -7,7 +7,8 @@ class EqualizerController extends ChangeNotifier {
   final EqualizerChannel _channel;
   EqualizerState _state = EqualizerState.initial();
 
-  EqualizerController({EqualizerChannel channel = const EqualizerChannel()}) : _channel = channel;
+  EqualizerController({EqualizerChannel channel = const EqualizerChannel()})
+      : _channel = channel;
 
   EqualizerState get state => _state;
 
@@ -26,7 +27,8 @@ class EqualizerController extends ChangeNotifier {
 
     final bands = List.generate(
       caps.bandCount,
-      (i) => EqualizerBand(index: i, centerFrequencyHz: caps.centerFrequenciesHz[i]),
+      (i) => EqualizerBand(
+          index: i, centerFrequencyHz: caps.centerFrequenciesHz[i]),
     );
 
     _state = _state.copyWith(
@@ -80,12 +82,15 @@ class EqualizerController extends ChangeNotifier {
   /// shape whether the hardware reports ±15dB, ±12.5dB, or ±10dB.
   Future<void> applyPreset(EqualizerPreset preset) async {
     if (_state.bands.isEmpty) return;
-    final span = _state.maxGainDb; // symmetric range assumed, matches every real AudioFx Equalizer
+    final span = _state
+        .maxGainDb; // symmetric range assumed, matches every real AudioFx Equalizer
 
     final updatedBands = <EqualizerBand>[];
     for (int i = 0; i < _state.bands.length; i++) {
-      final normalized = i < preset.normalizedCurve.length ? preset.normalizedCurve[i] : 0.0;
-      final gainDb = (normalized * span).clamp(_state.minGainDb, _state.maxGainDb);
+      final normalized =
+          i < preset.normalizedCurve.length ? preset.normalizedCurve[i] : 0.0;
+      final gainDb =
+          (normalized * span).clamp(_state.minGainDb, _state.maxGainDb);
       updatedBands.add(EqualizerBand(
         index: i,
         centerFrequencyHz: _state.bands[i].centerFrequencyHz,
@@ -93,7 +98,8 @@ class EqualizerController extends ChangeNotifier {
       ));
     }
 
-    _state = _state.copyWith(bands: updatedBands, activePresetName: preset.name);
+    _state =
+        _state.copyWith(bands: updatedBands, activePresetName: preset.name);
     await _reapplyCurrentBandsToNative();
     notifyListeners();
   }

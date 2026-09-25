@@ -12,7 +12,8 @@ import 'repeat_mode.dart';
 /// PlayHistory row and bump Track.playCount. Kept as a simple record type
 /// rather than a full event class since the handler only needs these
 /// three values.
-typedef PlaybackCommitCallback = void Function(Track track, int msPlayed, bool completedNaturally);
+typedef PlaybackCommitCallback = void Function(
+    Track track, int msPlayed, bool completedNaturally);
 
 /// How much of a track must actually play before it counts as a genuine
 /// listen for history/heavy-rotation purposes, rather than an
@@ -21,7 +22,9 @@ class PlaybackHistoryPolicy {
   const PlaybackHistoryPolicy._();
 
   static bool shouldRecord(int msPlayed, int durationMs) {
-    if (durationMs <= 0) return msPlayed >= 20000; // unknown duration: fall back to an absolute floor
+    if (durationMs <= 0)
+      return msPlayed >=
+          20000; // unknown duration: fall back to an absolute floor
     final halfway = durationMs / 2;
     const absoluteFloor = 30000; // 30s
     return msPlayed >= absoluteFloor || msPlayed >= halfway;
@@ -83,7 +86,8 @@ class PlaybackEngine {
     final current = queueManager.currentTrack;
     if (current != null) {
       final position = _primary.position;
-      await _loadQueueAtCurrentPosition(resumePosition: position, autoplay: _primary.playing);
+      await _loadQueueAtCurrentPosition(
+          resumePosition: position, autoplay: _primary.playing);
     }
   }
 
@@ -93,7 +97,8 @@ class PlaybackEngine {
     await _loadQueueAtCurrentPosition(autoplay: true);
   }
 
-  Future<void> _loadQueueAtCurrentPosition({Duration? resumePosition, bool autoplay = false}) async {
+  Future<void> _loadQueueAtCurrentPosition(
+      {Duration? resumePosition, bool autoplay = false}) async {
     final current = queueManager.currentTrack;
     if (current == null) return;
 
@@ -131,7 +136,9 @@ class PlaybackEngine {
     playOrderTracks.addAll(all.sublist(0, startPos));
 
     _gaplessSource = ConcatenatingAudioSource(
-      children: playOrderTracks.map((t) => AudioSource.uri(Uri.file(t.filePath))).toList(),
+      children: playOrderTracks
+          .map((t) => AudioSource.uri(Uri.file(t.filePath)))
+          .toList(),
     );
 
     await _primary.setLoopMode(_mapRepeatToLoopMode(queueManager.repeatMode));
@@ -145,8 +152,10 @@ class PlaybackEngine {
       final targetOriginalIndex = playOrderTracks.isEmpty
           ? -1
           : all.indexOf(playOrderTracks[index % playOrderTracks.length]);
-      if (targetOriginalIndex != -1 && targetOriginalIndex != queueManager.currentOriginalIndex) {
-        while (queueManager.currentOriginalIndex != targetOriginalIndex && queueManager.advanceToNext()) {
+      if (targetOriginalIndex != -1 &&
+          targetOriginalIndex != queueManager.currentOriginalIndex) {
+        while (queueManager.currentOriginalIndex != targetOriginalIndex &&
+            queueManager.advanceToNext()) {
           // drive QueueManager forward until it matches just_audio's
           // actual position; bounded by queue length so this can't loop
           // forever on a consistent state.
@@ -185,7 +194,8 @@ class PlaybackEngine {
 
     _stateSub = _primary.playerStateStream.listen((state) {
       _playingController.add(state.playing);
-      _bufferingController.add(state.processingState == ProcessingState.buffering);
+      _bufferingController
+          .add(state.processingState == ProcessingState.buffering);
 
       if (isGaplessMode && state.processingState == ProcessingState.completed) {
         _commitIfDue(forceComplete: true);
@@ -227,7 +237,8 @@ class PlaybackEngine {
     await standby.play();
 
     final steps = 20;
-    final stepDuration = Duration(milliseconds: crossfadeDuration.inMilliseconds ~/ steps);
+    final stepDuration =
+        Duration(milliseconds: crossfadeDuration.inMilliseconds ~/ steps);
     for (int i = 1; i <= steps; i++) {
       if (_standby != standby) return; // superseded by a manual skip mid-fade
       final t = i / steps;
@@ -272,7 +283,8 @@ class PlaybackEngine {
   /// resume doesn't start silent.
   Future<void> fadeOutAndPause(Duration duration) async {
     const steps = 30;
-    final stepDuration = Duration(milliseconds: (duration.inMilliseconds / steps).round());
+    final stepDuration =
+        Duration(milliseconds: (duration.inMilliseconds / steps).round());
     for (int i = 1; i <= steps; i++) {
       final volume = (1.0 - i / steps).clamp(0.0, 1.0);
       await _primary.setVolume(volume);
@@ -334,7 +346,8 @@ class PlaybackEngine {
     if (track == _lastCommittedTrack && _committedCurrentTrack) return;
 
     final shouldRecord = forceComplete ||
-        PlaybackHistoryPolicy.shouldRecord(_lastKnownPositionMs, track.durationMs);
+        PlaybackHistoryPolicy.shouldRecord(
+            _lastKnownPositionMs, track.durationMs);
     if (shouldRecord) {
       onPlaybackCommit(track, _lastKnownPositionMs, forceComplete);
       _committedCurrentTrack = true;

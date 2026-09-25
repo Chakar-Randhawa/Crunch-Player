@@ -19,7 +19,8 @@ import '../player/widgets/queue_screen.dart';
 const double _trackRowExtent = 66.0;
 
 class LibraryScreen extends ConsumerStatefulWidget {
-  final void Function(Track track, List<Track> queue, int startIndex)? onTrackSelected;
+  final void Function(Track track, List<Track> queue, int startIndex)?
+      onTrackSelected;
 
   const LibraryScreen({super.key, this.onTrackSelected});
 
@@ -54,7 +55,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       appBar: AppBar(
         backgroundColor: AppColors.backgroundDark,
         elevation: 0,
-        title: const Text('Library', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text('Library',
+            style: TextStyle(fontWeight: FontWeight.w700)),
         bottom: TabBar(
           controller: _tabController,
           isScrollable: false,
@@ -77,12 +79,19 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
           ),
           PopupMenuButton<LibrarySortOrder>(
             icon: const Icon(Icons.sort),
-            onSelected: (order) => ref.read(librarySortOrderProvider.notifier).state = order,
+            onSelected: (order) =>
+                ref.read(librarySortOrderProvider.notifier).state = order,
             itemBuilder: (context) => const [
-              PopupMenuItem(value: LibrarySortOrder.titleAsc, child: Text('Title')),
-              PopupMenuItem(value: LibrarySortOrder.artistAsc, child: Text('Artist')),
-              PopupMenuItem(value: LibrarySortOrder.dateAddedDesc, child: Text('Recently added')),
-              PopupMenuItem(value: LibrarySortOrder.playCountDesc, child: Text('Most played')),
+              PopupMenuItem(
+                  value: LibrarySortOrder.titleAsc, child: Text('Title')),
+              PopupMenuItem(
+                  value: LibrarySortOrder.artistAsc, child: Text('Artist')),
+              PopupMenuItem(
+                  value: LibrarySortOrder.dateAddedDesc,
+                  child: Text('Recently added')),
+              PopupMenuItem(
+                  value: LibrarySortOrder.playCountDesc,
+                  child: Text('Most played')),
             ],
           ),
           IconButton(
@@ -113,7 +122,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
 class _SongsTab extends ConsumerWidget {
   final ScrollController scrollController;
   final TextEditingController searchController;
-  final void Function(Track track, List<Track> queue, int startIndex)? onTrackSelected;
+  final void Function(Track track, List<Track> queue, int startIndex)?
+      onTrackSelected;
 
   const _SongsTab({
     required this.scrollController,
@@ -137,7 +147,8 @@ class _SongsTab extends ConsumerWidget {
             decoration: InputDecoration(
               hintText: 'Search songs, artists, albums',
               hintStyle: TextStyle(color: Colors.white.withOpacity(0.4)),
-              prefixIcon: Icon(Icons.search, color: Colors.white.withOpacity(0.4)),
+              prefixIcon:
+                  Icon(Icons.search, color: Colors.white.withOpacity(0.4)),
               filled: true,
               fillColor: AppColors.surfaceDark,
               contentPadding: const EdgeInsets.symmetric(vertical: 0),
@@ -146,18 +157,21 @@ class _SongsTab extends ConsumerWidget {
                 borderSide: BorderSide.none,
               ),
             ),
-            onChanged: (value) => ref.read(libraryQueryProvider.notifier).state = value,
+            onChanged: (value) =>
+                ref.read(libraryQueryProvider.notifier).state = value,
           ),
         ),
         Expanded(
           child: tracksAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (err, _) => Center(
-              child: Text('Could not load library: $err', style: const TextStyle(color: Colors.white54)),
+              child: Text('Could not load library: $err',
+                  style: const TextStyle(color: Colors.white54)),
             ),
             data: (tracks) {
               if (tracks.isEmpty) {
-                return _EmptyLibraryState(hasQuery: ref.watch(libraryQueryProvider).isNotEmpty);
+                return _EmptyLibraryState(
+                    hasQuery: ref.watch(libraryQueryProvider).isNotEmpty);
               }
               return Stack(
                 children: [
@@ -169,7 +183,8 @@ class _SongsTab extends ConsumerWidget {
                       final track = tracks[index];
                       return TrackListTile(
                         track: track,
-                        onTap: () => onTrackSelected?.call(track, tracks, index),
+                        onTap: () =>
+                            onTrackSelected?.call(track, tracks, index),
                         onFavoriteToggle: () => _toggleFavorite(ref, track),
                         onMoreTap: () => _showTrackActions(context, ref, track),
                       );
@@ -207,7 +222,8 @@ class _SongsTab extends ConsumerWidget {
       context: context,
       backgroundColor: AppColors.surfaceElevatedDark,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppTokens.radiusLg)),
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(AppTokens.radiusLg)),
       ),
       builder: (context) => SafeArea(
         child: Column(
@@ -215,17 +231,20 @@ class _SongsTab extends ConsumerWidget {
           children: [
             ListTile(
               leading: const Icon(Icons.playlist_add, color: Colors.white),
-              title: const Text('Add to playlist', style: TextStyle(color: Colors.white)),
+              title: const Text('Add to playlist',
+                  style: TextStyle(color: Colors.white)),
               onTap: () => Navigator.pop(context),
             ),
             ListTile(
               leading: const Icon(Icons.info_outline, color: Colors.white),
-              title: const Text('Track details', style: TextStyle(color: Colors.white)),
+              title: const Text('Track details',
+                  style: TextStyle(color: Colors.white)),
               onTap: () => Navigator.pop(context),
             ),
             ListTile(
               leading: const Icon(Icons.edit, color: Colors.white),
-              title: const Text('Edit tags', style: TextStyle(color: Colors.white)),
+              title: const Text('Edit tags',
+                  style: TextStyle(color: Colors.white)),
               onTap: () => Navigator.pop(context),
             ),
           ],
@@ -243,7 +262,8 @@ class _AlbumsTab extends ConsumerWidget {
     final albumsAsync = ref.watch(albumListProvider);
     return albumsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, _) => Center(child: Text('$err', style: const TextStyle(color: Colors.white54))),
+      error: (err, _) => Center(
+          child: Text('$err', style: const TextStyle(color: Colors.white54))),
       data: (albums) {
         if (albums.isEmpty) return const _EmptyLibraryState(hasQuery: false);
         return GridView.builder(
@@ -277,7 +297,10 @@ class _AlbumGridTile extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(AppTokens.radiusMd),
               gradient: const LinearGradient(
-                colors: [AppColors.accentDefault, AppColors.accentSecondaryDefault],
+                colors: [
+                  AppColors.accentDefault,
+                  AppColors.accentSecondaryDefault
+                ],
               ),
             ),
             child: const Icon(Icons.album, color: Colors.white70, size: 36),
@@ -288,7 +311,8 @@ class _AlbumGridTile extends StatelessWidget {
           album.name,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13.5),
+          style: const TextStyle(
+              color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13.5),
         ),
         Text(
           album.primaryArtistName,
@@ -309,14 +333,17 @@ class _ArtistsTab extends ConsumerWidget {
     final artistsAsync = ref.watch(artistListProvider);
     return artistsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, _) => Center(child: Text('$err', style: const TextStyle(color: Colors.white54))),
+      error: (err, _) => Center(
+          child: Text('$err', style: const TextStyle(color: Colors.white54))),
       data: (artists) {
         if (artists.isEmpty) return const _EmptyLibraryState(hasQuery: false);
         return ListView.separated(
           padding: const EdgeInsets.symmetric(vertical: 8),
           itemCount: artists.length,
-          separatorBuilder: (_, __) => Divider(height: 1, color: Colors.white.withOpacity(0.06)),
-          itemBuilder: (context, index) => _ArtistListTile(artist: artists[index]),
+          separatorBuilder: (_, __) =>
+              Divider(height: 1, color: Colors.white.withOpacity(0.06)),
+          itemBuilder: (context, index) =>
+              _ArtistListTile(artist: artists[index]),
         );
       },
     );
@@ -334,7 +361,9 @@ class _ArtistListTile extends StatelessWidget {
         backgroundColor: Colors.white.withOpacity(0.08),
         child: const Icon(Icons.person, color: Colors.white70),
       ),
-      title: Text(artist.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+      title: Text(artist.name,
+          style: const TextStyle(
+              color: Colors.white, fontWeight: FontWeight.w600)),
       subtitle: Text(
         '${artist.trackCount} songs • ${artist.albumCount} albums',
         style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 12.5),
@@ -364,14 +393,16 @@ class _EmptyLibraryState extends StatelessWidget {
             const SizedBox(height: 14),
             Text(
               hasQuery ? 'No matches for that search' : 'No music found yet',
-              style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 15),
+              style:
+                  TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 15),
               textAlign: TextAlign.center,
             ),
             if (!hasQuery) ...[
               const SizedBox(height: 6),
               Text(
                 'Run a library scan from Settings to index your local files.',
-                style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12.5),
+                style: TextStyle(
+                    color: Colors.white.withOpacity(0.4), fontSize: 12.5),
                 textAlign: TextAlign.center,
               ),
             ],

@@ -6,7 +6,8 @@ import '../tagging/id3_tag_writer.dart';
 
 class RingtoneResult {
   final String uri;
-  final bool autoApplied; // true if set as the actual default ringtone; false if only added to the picker
+  final bool
+      autoApplied; // true if set as the actual default ringtone; false if only added to the picker
   const RingtoneResult({required this.uri, required this.autoApplied});
 }
 
@@ -23,10 +24,12 @@ class RingtoneResult {
 /// no vendoring or native bridge that unlocks it, unlike the LAME/ONNX/
 /// AVAudioEngine gaps elsewhere in this app.
 class RingtoneTagService {
-  static const MethodChannel _channel = MethodChannel('com.craunch.player/ringtone');
+  static const MethodChannel _channel =
+      MethodChannel('com.craunch.player/ringtone');
   final Id3TagWriter _tagWriter;
 
-  const RingtoneTagService({Id3TagWriter tagWriter = const Id3TagWriter()}) : _tagWriter = tagWriter;
+  const RingtoneTagService({Id3TagWriter tagWriter = const Id3TagWriter()})
+      : _tagWriter = tagWriter;
 
   Future<void> editTags(String mp3FilePath, TagEditFields fields) async {
     if (p.extension(mp3FilePath).toLowerCase() != '.mp3') {
@@ -59,11 +62,13 @@ class RingtoneTagService {
       );
     }
 
-    final result = await _channel.invokeMethod<Map<dynamic, dynamic>>('setAsRingtone', {
+    final result =
+        await _channel.invokeMethod<Map<dynamic, dynamic>>('setAsRingtone', {
       'sourceFilePath': sourceFilePath,
       'displayName': p.basename(sourceFilePath),
     });
-    if (result == null) throw StateError('Native ringtone setter returned no result');
+    if (result == null)
+      throw StateError('Native ringtone setter returned no result');
 
     return RingtoneResult(
       uri: result['uri'] as String,

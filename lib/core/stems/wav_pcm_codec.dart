@@ -2,11 +2,15 @@ import 'dart:io';
 import 'dart:typed_data';
 
 class WavPcmData {
-  final Float32List samples; // interleaved if multi-channel, normalized to [-1.0, 1.0]
+  final Float32List
+      samples; // interleaved if multi-channel, normalized to [-1.0, 1.0]
   final int sampleRate;
   final int channelCount;
 
-  const WavPcmData({required this.samples, required this.sampleRate, required this.channelCount});
+  const WavPcmData(
+      {required this.samples,
+      required this.sampleRate,
+      required this.channelCount});
 }
 
 /// Minimal 16-bit PCM WAV reader/writer. Deliberately narrow in scope —
@@ -29,7 +33,8 @@ class WavPcmCodec {
     final sampleRate = data.getUint32(24, Endian.little);
     final bitsPerSample = data.getUint16(34, Endian.little);
     if (bitsPerSample != 16) {
-      throw UnsupportedError('Only 16-bit PCM WAV is supported, got $bitsPerSample-bit');
+      throw UnsupportedError(
+          'Only 16-bit PCM WAV is supported, got $bitsPerSample-bit');
     }
 
     // Locate the 'data' chunk rather than assuming it starts at byte 44 —
@@ -56,7 +61,8 @@ class WavPcmCodec {
       samples[i] = raw / 32768.0;
     }
 
-    return WavPcmData(samples: samples, sampleRate: sampleRate, channelCount: channelCount);
+    return WavPcmData(
+        samples: samples, sampleRate: sampleRate, channelCount: channelCount);
   }
 
   Future<void> write(String path, WavPcmData pcm) async {

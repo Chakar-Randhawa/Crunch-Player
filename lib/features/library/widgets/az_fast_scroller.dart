@@ -49,8 +49,10 @@ class _AzFastScrollerState extends State<AzFastScroller> {
           child: GestureDetector(
             key: _stripKey,
             behavior: HitTestBehavior.opaque,
-            onVerticalDragStart: (details) => _handleTouch(details.localPosition.dy),
-            onVerticalDragUpdate: (details) => _handleTouch(details.localPosition.dy),
+            onVerticalDragStart: (details) =>
+                _handleTouch(details.localPosition.dy),
+            onVerticalDragUpdate: (details) =>
+                _handleTouch(details.localPosition.dy),
             onVerticalDragEnd: (_) => _clearActive(),
             onVerticalDragCancel: _clearActive,
             onTapDown: (details) => _handleTouch(details.localPosition.dy),
@@ -64,13 +66,15 @@ class _AzFastScrollerState extends State<AzFastScroller> {
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: AzIndex.alphabet.map((letter) {
-                      final hasEntries = widget.index.letterToFirstIndex.containsKey(letter);
+                      final hasEntries =
+                          widget.index.letterToFirstIndex.containsKey(letter);
                       final isActive = letter == _activeLetter;
                       return Text(
                         letter,
                         style: TextStyle(
                           fontSize: isActive ? 13 : 10,
-                          fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+                          fontWeight:
+                              isActive ? FontWeight.w700 : FontWeight.w500,
                           color: !hasEntries
                               ? Colors.white.withOpacity(0.18)
                               : isActive
@@ -100,14 +104,21 @@ class _AzFastScrollerState extends State<AzFastScroller> {
                   decoration: BoxDecoration(
                     color: AppColors.surfaceElevatedDark.withOpacity(0.92),
                     shape: BoxShape.circle,
-                    border: Border.all(color: accent.primary.withOpacity(0.6), width: 1.5),
+                    border: Border.all(
+                        color: accent.primary.withOpacity(0.6), width: 1.5),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.35), blurRadius: 18, offset: const Offset(0, 6)),
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.35),
+                          blurRadius: 18,
+                          offset: const Offset(0, 6)),
                     ],
                   ),
                   child: Text(
                     _activeLetter!,
-                    style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: Colors.white),
+                    style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white),
                   ),
                 ),
               ),
@@ -118,13 +129,15 @@ class _AzFastScrollerState extends State<AzFastScroller> {
   }
 
   void _handleTouch(double localDy) {
-    final renderBox = _stripKey.currentContext?.findRenderObject() as RenderBox?;
+    final renderBox =
+        _stripKey.currentContext?.findRenderObject() as RenderBox?;
     if (renderBox == null) return;
 
     final height = renderBox.size.height;
     final clamped = localDy.clamp(0.0, height);
     final letterCount = AzIndex.alphabet.length;
-    final rawIndex = (clamped / height * letterCount).floor().clamp(0, letterCount - 1);
+    final rawIndex =
+        (clamped / height * letterCount).floor().clamp(0, letterCount - 1);
     final letter = AzIndex.alphabet[rawIndex];
 
     if (letter != _activeLetter) {

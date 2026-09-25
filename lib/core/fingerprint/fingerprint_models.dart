@@ -26,13 +26,15 @@ class FingerprintHash {
 class TrackFingerprint {
   final List<FingerprintHash> hashes;
   final Duration analysisDuration;
-  const TrackFingerprint({required this.hashes, required this.analysisDuration});
+  const TrackFingerprint(
+      {required this.hashes, required this.analysisDuration});
 }
 
 class DuplicateMatch {
   final int candidateTrackId;
   final int matchingHashCount;
-  final double confidence; // 0..1, matchingHashCount relative to the smaller track's total hash count
+  final double
+      confidence; // 0..1, matchingHashCount relative to the smaller track's total hash count
   const DuplicateMatch({
     required this.candidateTrackId,
     required this.matchingHashCount,

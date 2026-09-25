@@ -58,7 +58,8 @@ class StorageScanner {
     receivePort.listen((message) {
       if (message is ScanProgress) {
         controller.add(message);
-        if (message.phase == ScanPhase.complete || message.phase == ScanPhase.error) {
+        if (message.phase == ScanPhase.complete ||
+            message.phase == ScanPhase.error) {
           _teardown();
           controller.close();
         }
@@ -74,7 +75,8 @@ class StorageScanner {
       // stream still closes rather than hanging forever.
       if (controller.isClosed) return;
       if (message is List && message.isNotEmpty) {
-        controller.add(ScanProgress(phase: ScanPhase.error, errorMessage: message.first.toString()));
+        controller.add(ScanProgress(
+            phase: ScanPhase.error, errorMessage: message.first.toString()));
       } else {
         controller.add(const ScanProgress(
           phase: ScanPhase.error,
@@ -93,7 +95,8 @@ class StorageScanner {
         onExit: receivePort.sendPort,
       );
     } catch (e) {
-      controller.add(ScanProgress(phase: ScanPhase.error, errorMessage: e.toString()));
+      controller.add(
+          ScanProgress(phase: ScanPhase.error, errorMessage: e.toString()));
       _teardown();
       await controller.close();
     }
@@ -106,7 +109,8 @@ class StorageScanner {
   Future<void> cancel() async {
     if (_isolate == null) return;
     _isolate!.kill(priority: Isolate.immediate);
-    _controller?.add(const ScanProgress(phase: ScanPhase.error, errorMessage: 'Scan cancelled.'));
+    _controller?.add(const ScanProgress(
+        phase: ScanPhase.error, errorMessage: 'Scan cancelled.'));
     await _controller?.close();
     _teardown();
   }

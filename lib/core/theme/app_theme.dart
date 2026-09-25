@@ -16,7 +16,8 @@ class AppTokens {
   static const double radiusMd = 18;
   static const double radiusLg = 28;
 
-  static const Curve entrance = Cubic(0.16, 1.0, 0.30, 1.0); // premium overshoot-free ease-out
+  static const Curve entrance =
+      Cubic(0.16, 1.0, 0.30, 1.0); // premium overshoot-free ease-out
   static const Curve exit = Cubic(0.7, 0.0, 0.84, 0.0);
 }
 
@@ -61,7 +62,8 @@ class AppAccent {
 /// two [AppAccent] values — Flutter's Tween machinery needs an explicit
 /// lerp implementation for any non-built-in type.
 class AppAccentTween extends Tween<AppAccent> {
-  AppAccentTween({required AppAccent super.begin, required AppAccent super.end});
+  AppAccentTween(
+      {required AppAccent super.begin, required AppAccent super.end});
 
   @override
   AppAccent lerp(double t) => begin!.lerpTo(end!, t);

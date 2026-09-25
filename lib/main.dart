@@ -96,7 +96,8 @@ class _CraunchPlayerAppState extends State<CraunchPlayerApp> {
               // not an abrupt color snap. `begin` only matters for the
               // very first frame, before any animation has run.
               return TweenAnimationBuilder<AppAccent>(
-                tween: AppAccentTween(begin: AppAccent.fallback, end: targetAccent),
+                tween: AppAccentTween(
+                    begin: AppAccent.fallback, end: targetAccent),
                 duration: AppTokens.routeTransition,
                 builder: (context, animatedAccent, child) => AccentScope(
                   accent: animatedAccent,
@@ -123,7 +124,9 @@ class _CraunchPlayerAppState extends State<CraunchPlayerApp> {
           ? Consumer(
               builder: (context, ref, _) => LibraryScreen(
                 onTrackSelected: (track, queue, startIndex) {
-                  ref.read(audioHandlerProvider).playTrackWithQueue(queue, startIndex);
+                  ref
+                      .read(audioHandlerProvider)
+                      .playTrackWithQueue(queue, startIndex);
                 },
               ),
             )
@@ -161,7 +164,8 @@ class _AccentSubscriptionState extends State<_AccentSubscription> {
   @override
   void initState() {
     super.initState();
-    _subscription = widget.audioHandler.currentTrackStream.listen(widget.controller.onTrackChanged);
+    _subscription = widget.audioHandler.currentTrackStream
+        .listen(widget.controller.onTrackChanged);
   }
 
   @override

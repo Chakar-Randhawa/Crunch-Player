@@ -8,7 +8,8 @@ import 'package:flutter/services.dart';
 /// Activities, a materially different, ActivityKit-based feature not
 /// implemented in this pass).
 class OverlayChannel {
-  static const MethodChannel _channel = MethodChannel('com.craunch.player/overlay');
+  static const MethodChannel _channel =
+      MethodChannel('com.craunch.player/overlay');
 
   const OverlayChannel();
 
@@ -41,7 +42,8 @@ class OverlayChannel {
     }
   }
 
-  Future<void> updateColors({required Color primary, required Color secondary}) async {
+  Future<void> updateColors(
+      {required Color primary, required Color secondary}) async {
     if (!isSupportedPlatform) return;
     try {
       await _channel.invokeMethod('updateColors', {

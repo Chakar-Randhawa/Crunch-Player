@@ -34,7 +34,8 @@ class NativeEqualizerCapabilities {
 /// platforms with no native implementation registered, so callers never
 /// need their own platform checks.
 class EqualizerChannel {
-  static const MethodChannel _channel = MethodChannel('com.craunch.player/equalizer');
+  static const MethodChannel _channel =
+      MethodChannel('com.craunch.player/equalizer');
 
   const EqualizerChannel();
 
@@ -78,12 +79,14 @@ class EqualizerChannel {
 
   Future<void> setBassBoostStrength(int strength0to1000) async {
     if (!isSupportedPlatform) return;
-    await _channel.invokeMethod('setBassBoostStrength', {'strength': strength0to1000});
+    await _channel
+        .invokeMethod('setBassBoostStrength', {'strength': strength0to1000});
   }
 
   Future<void> setVirtualizerStrength(int strength0to1000) async {
     if (!isSupportedPlatform) return;
-    await _channel.invokeMethod('setVirtualizerStrength', {'strength': strength0to1000});
+    await _channel
+        .invokeMethod('setVirtualizerStrength', {'strength': strength0to1000});
   }
 
   Future<void> setReverbPreset(String presetKey) async {

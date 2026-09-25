@@ -12,7 +12,9 @@ class MediaItemMapper {
       artist: track.artistName,
       album: track.albumName,
       genre: track.genre.isEmpty ? null : track.genre,
-      duration: track.durationMs > 0 ? Duration(milliseconds: track.durationMs) : null,
+      duration: track.durationMs > 0
+          ? Duration(milliseconds: track.durationMs)
+          : null,
       extras: {'trackDbId': track.id},
     );
   }

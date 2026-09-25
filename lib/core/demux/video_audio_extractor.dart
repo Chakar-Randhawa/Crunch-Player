@@ -7,7 +7,10 @@ class InstantDemuxResult {
   final String outputPath;
   final String mimeType;
   final Duration duration;
-  const InstantDemuxResult({required this.outputPath, required this.mimeType, required this.duration});
+  const InstantDemuxResult(
+      {required this.outputPath,
+      required this.mimeType,
+      required this.duration});
 }
 
 /// The MP4→MP3 Demuxer feature's Dart entry point. Offers two genuinely
@@ -24,7 +27,8 @@ class InstantDemuxResult {
 ///   the native encoder to have been built — see DemuxPlugin.kt's error
 ///   message for setup steps if [isMp3EncoderAvailable] returns false.
 class VideoAudioExtractor {
-  static const MethodChannel _channel = MethodChannel('com.craunch.player/demux');
+  static const MethodChannel _channel =
+      MethodChannel('com.craunch.player/demux');
 
   const VideoAudioExtractor();
 
@@ -34,11 +38,13 @@ class VideoAudioExtractor {
     _assertSupported();
     final outputPath = await _outputPathFor(videoPath, extension: 'm4a');
 
-    final result = await _channel.invokeMethod<Map<dynamic, dynamic>>('extractInstant', {
+    final result =
+        await _channel.invokeMethod<Map<dynamic, dynamic>>('extractInstant', {
       'inputPath': videoPath,
       'outputPath': outputPath,
     });
-    if (result == null) throw StateError('Native demux returned no result for $videoPath');
+    if (result == null)
+      throw StateError('Native demux returned no result for $videoPath');
 
     return InstantDemuxResult(
       outputPath: result['outputPath'] as String,
@@ -55,20 +61,24 @@ class VideoAudioExtractor {
   /// Throws a [PlatformException] with code `ENCODER_NOT_BUILT` and a
   /// setup-instructions message if the native LAME bridge hasn't been
   /// compiled in yet — see the class doc above.
-  Future<String> transcodeToMp3(String videoPath, {int bitrateKbps = 192}) async {
+  Future<String> transcodeToMp3(String videoPath,
+      {int bitrateKbps = 192}) async {
     _assertSupported();
     final outputPath = await _outputPathFor(videoPath, extension: 'mp3');
 
-    final result = await _channel.invokeMethod<Map<dynamic, dynamic>>('transcodeToMp3', {
+    final result =
+        await _channel.invokeMethod<Map<dynamic, dynamic>>('transcodeToMp3', {
       'inputPath': videoPath,
       'outputPath': outputPath,
       'bitrateKbps': bitrateKbps,
     });
-    if (result == null) throw StateError('Native transcode returned no result for $videoPath');
+    if (result == null)
+      throw StateError('Native transcode returned no result for $videoPath');
     return result['outputPath'] as String;
   }
 
-  Future<String> _outputPathFor(String sourcePath, {required String extension}) async {
+  Future<String> _outputPathFor(String sourcePath,
+      {required String extension}) async {
     final dir = await getApplicationDocumentsDirectory();
     final base = p.basenameWithoutExtension(sourcePath);
     final outputDir = Directory(p.join(dir.path, 'extracted_audio'));

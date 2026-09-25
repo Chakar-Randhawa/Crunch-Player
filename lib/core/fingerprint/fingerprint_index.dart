@@ -11,11 +11,14 @@ class FingerprintIndex {
   final Map<int, int> _trackHashCounts = {};
 
   void addTrack(int trackId, TrackFingerprint fingerprint) {
-    removeTrack(trackId); // idempotent — re-indexing a re-scanned track replaces its old entries
+    removeTrack(
+        trackId); // idempotent — re-indexing a re-scanned track replaces its old entries
     _trackHashCounts[trackId] = fingerprint.hashes.length;
 
     for (final h in fingerprint.hashes) {
-      _hashToEntries.putIfAbsent(h.hash, () => []).add(_IndexEntry(trackId, h.anchorTimeFrame));
+      _hashToEntries
+          .putIfAbsent(h.hash, () => [])
+          .add(_IndexEntry(trackId, h.anchorTimeFrame));
     }
   }
 
@@ -68,7 +71,8 @@ class FingerprintIndex {
       final smallerCount = fingerprint.hashes.length < candidateHashCount
           ? fingerprint.hashes.length
           : candidateHashCount;
-      final confidence = smallerCount == 0 ? 0.0 : bestOffsetVotes / smallerCount;
+      final confidence =
+          smallerCount == 0 ? 0.0 : bestOffsetVotes / smallerCount;
 
       if (confidence >= minConfidence) {
         results.add(DuplicateMatch(

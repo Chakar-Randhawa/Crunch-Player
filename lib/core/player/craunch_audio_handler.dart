@@ -18,7 +18,8 @@ import 'repeat_mode.dart';
 /// MediaItem/PlaybackState types — PlaybackEngine and QueueManager stay
 /// framework-agnostic so they can be unit tested without a platform
 /// channel.
-class CraunchAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
+class CraunchAudioHandler extends BaseAudioHandler
+    with QueueHandler, SeekHandler {
   late final PlaybackEngine _engine;
   final QueueManager _queueManager = QueueManager();
   final EqualizerController equalizer = EqualizerController();
@@ -48,8 +49,10 @@ class CraunchAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandle
       onPlaybackCommit: _commitPlaybackHistory,
     );
     sleepTimer = MovementSleepTimer(
-      onFadeOutStart: () => _engine.fadeOutAndPause(const Duration(seconds: 20)),
-      onTimerEnd: () {}, // fadeOutAndPause above already pauses at zero volume by the time the duration elapses
+      onFadeOutStart: () =>
+          _engine.fadeOutAndPause(const Duration(seconds: 20)),
+      onTimerEnd:
+          () {}, // fadeOutAndPause above already pauses at zero volume by the time the duration elapses
     );
     _bindEngineStreams();
   }
@@ -67,7 +70,8 @@ class CraunchAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandle
       _duration = duration;
       final current = _queueManager.currentTrack;
       if (current != null) {
-        mediaItem.add(MediaItemMapper.fromTrack(current).copyWith(duration: duration));
+        mediaItem.add(
+            MediaItemMapper.fromTrack(current).copyWith(duration: duration));
       }
     });
     _bufferingSub = _engine.bufferingStream.listen((buffering) {
@@ -111,10 +115,13 @@ class CraunchAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandle
   }
 
   void _updateQueueBroadcast() {
-    queue.add(_queueManager.queueInOriginalOrder.map(MediaItemMapper.fromTrack).toList());
+    queue.add(_queueManager.queueInOriginalOrder
+        .map(MediaItemMapper.fromTrack)
+        .toList());
   }
 
-  Future<void> _commitPlaybackHistory(Track track, int msPlayed, bool completedNaturally) async {
+  Future<void> _commitPlaybackHistory(
+      Track track, int msPlayed, bool completedNaturally) async {
     final isar = await IsarService.instance.open();
     await isar.writeTxn(() async {
       final history = PlayHistory()
@@ -186,13 +193,15 @@ class CraunchAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandle
   /// library UI to start playback of a chosen track within its surrounding
   /// list — e.g. tapping a song in the Songs tab queues the whole visible
   /// list with that song as the start index.
-  Future<void> playTrackWithQueue(List<Track> queueTracks, int startIndex) async {
+  Future<void> playTrackWithQueue(
+      List<Track> queueTracks, int startIndex) async {
     await _engine.loadAndPlayQueue(queueTracks, startIndex);
     _updateQueueBroadcast();
   }
 
   Future<void> setCrossfadeSeconds(double seconds) async {
-    await _engine.setCrossfadeDuration(Duration(milliseconds: (seconds * 1000).round()));
+    await _engine
+        .setCrossfadeDuration(Duration(milliseconds: (seconds * 1000).round()));
   }
 
   /// Backing calls for the drag-and-drop queue screen. `fromVisualIndex`/

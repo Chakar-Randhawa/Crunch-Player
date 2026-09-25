@@ -1,9 +1,11 @@
 enum StemType { vocals, instrumental, drums, bass, other }
 
 class StemSeparationResult {
-  final Map<StemType, String> stemFilePaths; // WAV files, one per separated stem
+  final Map<StemType, String>
+      stemFilePaths; // WAV files, one per separated stem
   final Duration processingTime;
-  const StemSeparationResult({required this.stemFilePaths, required this.processingTime});
+  const StemSeparationResult(
+      {required this.stemFilePaths, required this.processingTime});
 }
 
 enum StemSeparationPhase { decoding, running, mixing, complete, error }
@@ -56,8 +58,10 @@ class StemModelSpec {
   static const spleeter2Stem = StemModelSpec(
     assetPath: 'assets/models/spleeter_2stem_unet.onnx',
     inputTensorName: 'strided_slice_3:0',
-    outputTensorNames: ['vocals_spectrogram/mul:0', 'accompaniment_spectrogram/mul:0'],
+    outputTensorNames: [
+      'vocals_spectrogram/mul:0',
+      'accompaniment_spectrogram/mul:0'
+    ],
     producedStems: [StemType.vocals, StemType.instrumental],
   );
 }
-

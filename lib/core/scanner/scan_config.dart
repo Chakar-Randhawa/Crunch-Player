@@ -67,8 +67,10 @@ class ScanConfig {
       allowedExtensions: allowedExtensions ?? this.allowedExtensions,
       minTrackDuration: minTrackDuration ?? this.minTrackDuration,
       minFileSizeBytes: minFileSizeBytes ?? this.minFileSizeBytes,
-      excludedDirectoryNames: excludedDirectoryNames ?? this.excludedDirectoryNames,
-      excludedAbsolutePaths: excludedAbsolutePaths ?? this.excludedAbsolutePaths,
+      excludedDirectoryNames:
+          excludedDirectoryNames ?? this.excludedDirectoryNames,
+      excludedAbsolutePaths:
+          excludedAbsolutePaths ?? this.excludedAbsolutePaths,
       maxRecursionDepth: maxRecursionDepth ?? this.maxRecursionDepth,
       dbWriteBatchSize: dbWriteBatchSize ?? this.dbWriteBatchSize,
     );
@@ -81,8 +83,10 @@ class ScanConfig {
   }
 
   bool isDirectoryExcluded(String dirPath) {
-    final segment = dirPath.split(RegExp(r'[\\/]')).where((s) => s.isNotEmpty).lastOrNull;
-    if (segment != null && excludedDirectoryNames.contains(segment.toLowerCase())) {
+    final segment =
+        dirPath.split(RegExp(r'[\\/]')).where((s) => s.isNotEmpty).lastOrNull;
+    if (segment != null &&
+        excludedDirectoryNames.contains(segment.toLowerCase())) {
       return true;
     }
     return excludedAbsolutePaths.contains(dirPath);
@@ -104,10 +108,13 @@ class ScanConfig {
 
   factory ScanConfig.fromJson(Map<String, dynamic> json) => ScanConfig(
         allowedExtensions: Set<String>.from(json['allowedExtensions'] as List),
-        minTrackDuration: Duration(milliseconds: json['minTrackDurationMs'] as int),
+        minTrackDuration:
+            Duration(milliseconds: json['minTrackDurationMs'] as int),
         minFileSizeBytes: json['minFileSizeBytes'] as int,
-        excludedDirectoryNames: Set<String>.from(json['excludedDirectoryNames'] as List),
-        excludedAbsolutePaths: Set<String>.from(json['excludedAbsolutePaths'] as List),
+        excludedDirectoryNames:
+            Set<String>.from(json['excludedDirectoryNames'] as List),
+        excludedAbsolutePaths:
+            Set<String>.from(json['excludedAbsolutePaths'] as List),
         maxRecursionDepth: json['maxRecursionDepth'] as int,
         dbWriteBatchSize: json['dbWriteBatchSize'] as int,
       );

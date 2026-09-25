@@ -26,7 +26,8 @@ class FingerprintService {
     await isar.writeTxn(() async {
       final fresh = await isar.tracks.get(track.id);
       if (fresh != null) {
-        fresh.fingerprintHashes = fingerprint.hashes.map((h) => h.pack()).toList();
+        fresh.fingerprintHashes =
+            fingerprint.hashes.map((h) => h.pack()).toList();
         await isar.tracks.put(fresh);
       }
     });
@@ -63,7 +64,8 @@ class FingerprintService {
   TrackFingerprint _fromPacked(List<int> packed) {
     return TrackFingerprint(
       hashes: packed.map(FingerprintHash.unpack).toList(),
-      analysisDuration: Duration.zero, // not needed for matching; only used at generation time
+      analysisDuration: Duration
+          .zero, // not needed for matching; only used at generation time
     );
   }
 }

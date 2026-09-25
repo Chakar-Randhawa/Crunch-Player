@@ -27,7 +27,8 @@ class AudioFingerprinter {
   // roughly covering 20Hz-5kHz, where most perceptually distinguishing
   // musical energy concentrates.
   static const List<int> _bandEdges = [10, 20, 40, 80, 160, 320, 640];
-  static const int _targetZoneSize = 5; // how many subsequent peaks each anchor pairs with
+  static const int _targetZoneSize =
+      5; // how many subsequent peaks each anchor pairs with
 
   Future<TrackFingerprint> generate(String audioFilePath) async {
     final pcmSource = const PcmSource();
@@ -63,7 +64,8 @@ class AudioFingerprinter {
     final totalFrames = peaksByFrame.length;
     final durationMs = (totalFrames * _hopSize / 44100 * 1000).round();
 
-    return TrackFingerprint(hashes: hashes, analysisDuration: Duration(milliseconds: durationMs));
+    return TrackFingerprint(
+        hashes: hashes, analysisDuration: Duration(milliseconds: durationMs));
   }
 
   List<_Peak> _strongestPeakPerBand(Float64List spectrum) {

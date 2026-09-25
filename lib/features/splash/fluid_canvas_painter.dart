@@ -18,15 +18,20 @@ class FluidCanvasPainter extends CustomPainter {
 
     final blobs = <_Blob>[
       _Blob(phase: 0.0, colorT: 0.0, speed: 1.0, radiusScale: 1.0),
-      _Blob(phase: math.pi * 2 / 3, colorT: 0.5, speed: 0.75, radiusScale: 0.82),
-      _Blob(phase: math.pi * 4 / 3, colorT: 1.0, speed: 1.25, radiusScale: 0.66),
+      _Blob(
+          phase: math.pi * 2 / 3, colorT: 0.5, speed: 0.75, radiusScale: 0.82),
+      _Blob(
+          phase: math.pi * 4 / 3, colorT: 1.0, speed: 1.25, radiusScale: 0.66),
     ];
 
     for (final blob in blobs) {
       final angle = blob.phase + t * math.pi * 2 * blob.speed;
       final orbit = size.shortestSide * 0.14;
-      final origin = center + Offset(math.cos(angle), math.sin(angle) * 0.6) * orbit;
-      final radius = baseRadius * blob.radiusScale * (0.9 + 0.1 * math.sin(t * math.pi * 4 + blob.phase));
+      final origin =
+          center + Offset(math.cos(angle), math.sin(angle) * 0.6) * orbit;
+      final radius = baseRadius *
+          blob.radiusScale *
+          (0.9 + 0.1 * math.sin(t * math.pi * 4 + blob.phase));
 
       final color = Color.lerp(accent.primary, accent.secondary, blob.colorT)!
           .withOpacity(0.28);

@@ -121,7 +121,8 @@ class _SplashScreenState extends State<SplashScreen>
           AnimatedBuilder(
             animation: _canvasController,
             builder: (context, _) => CustomPaint(
-              painter: FluidCanvasPainter(t: _canvasController.value, accent: accent),
+              painter: FluidCanvasPainter(
+                  t: _canvasController.value, accent: accent),
             ),
           ),
           SafeArea(
@@ -159,7 +160,10 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                 ),
                 const Spacer(flex: 3),
-                _ProgressTracker(progress: _checkProgress, label: _statusLabel, accent: accent),
+                _ProgressTracker(
+                    progress: _checkProgress,
+                    label: _statusLabel,
+                    accent: accent),
                 const SizedBox(height: 48),
               ],
             ),
@@ -197,7 +201,11 @@ class _MarkPainter extends CustomPainter {
       ..strokeWidth = size.shortestSide * 0.09
       ..strokeCap = StrokeCap.round
       ..shader = const SweepGradient(
-        colors: [AppColors.accentDefault, AppColors.accentSecondaryDefault, AppColors.accentDefault],
+        colors: [
+          AppColors.accentDefault,
+          AppColors.accentSecondaryDefault,
+          AppColors.accentDefault
+        ],
       ).createShader(Rect.fromCircle(center: center, radius: radius));
 
     // Open ring (C shape): sweep 300 degrees, leaving a 60 degree gap.
@@ -215,10 +223,14 @@ class _MarkPainter extends CustomPainter {
     final barAreaWidth = radius * 0.9;
     final heights = [0.35, 0.65, 1.0, 0.55, 0.3];
     for (int i = 0; i < barCount; i++) {
-      final x = center.dx - barAreaWidth / 2 + (barAreaWidth / (barCount - 1)) * i;
+      final x =
+          center.dx - barAreaWidth / 2 + (barAreaWidth / (barCount - 1)) * i;
       final h = radius * 0.7 * heights[i];
       final rect = RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset(x, center.dy), width: size.shortestSide * 0.06, height: h),
+        Rect.fromCenter(
+            center: Offset(x, center.dy),
+            width: size.shortestSide * 0.06,
+            height: h),
         Radius.circular(size.shortestSide * 0.03),
       );
       canvas.drawRRect(rect, barPaint);
@@ -260,7 +272,8 @@ class _ProgressTracker extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(colors: [accent.primary, accent.secondary]),
+                        gradient: LinearGradient(
+                            colors: [accent.primary, accent.secondary]),
                       ),
                     ),
                   ),

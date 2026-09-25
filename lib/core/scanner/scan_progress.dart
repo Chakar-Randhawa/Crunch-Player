@@ -2,7 +2,13 @@ import 'dart:isolate';
 
 /// Discrete phases the UI can react to — e.g. showing "Indexing tags" vs
 /// "Linking library" in the scan progress sheet.
-enum ScanPhase { walkingDirectories, readingTags, linkingLibrary, complete, error }
+enum ScanPhase {
+  walkingDirectories,
+  readingTags,
+  linkingLibrary,
+  complete,
+  error
+}
 
 class ScanProgress {
   final ScanPhase phase;
