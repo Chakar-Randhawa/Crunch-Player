@@ -32,12 +32,18 @@ tasks.register("clean", Delete) {
 subprojects {
     ext.pluginHooks = {
         if (project.hasProperty("android")) {
-            if (project.android.namespace == null) {
+            // Fix for isar_flutter_libs missing namespace
+            if (project.name == "isar_flutter_libs" || project.android.namespace == null) {
                 project.android.namespace = "dev.isar.isar_flutter_libs"
+            }
+            // Fix for on_audio_query package attribute conflict
+            if (project.name.contains("on_audio_query")) {
+                project.android.namespace = "com.lucasjosino.on_audio_query"
+                // Yeh step manifest ke package attribute ko crash karne se rokega
+                project.android.defaultConfig.applicationId = "com.lucasjosino.on_audio_query"
             }
         }
     }
-    // Agar project already evaluate ho chuka hai to direct apply kare, warna hook lagaye
     if (project.state.executed) {
         pluginHooks()
     } else {
