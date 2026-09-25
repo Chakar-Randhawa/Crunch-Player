@@ -30,12 +30,19 @@ tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
 subprojects {
-    afterEvaluate { project ->
+    ext.pluginHooks = {
         if (project.hasProperty("android")) {
-            // Agar kisi library (jaise isar) ka namespace missing ho to auto-assign ho jaye
             if (project.android.namespace == null) {
                 project.android.namespace = "dev.isar.isar_flutter_libs"
             }
+        }
+    }
+    // Agar project already evaluate ho chuka hai to direct apply kare, warna hook lagaye
+    if (project.state.executed) {
+        pluginHooks()
+    } else {
+        project.afterEvaluate {
+            pluginHooks()
         }
     }
 }
