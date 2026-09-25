@@ -86,7 +86,9 @@ jobs:
       # are configured in the repository; otherwise the debug-signed build
       # below proceeds unaffected. See android/app/build.gradle.
       - name: Decode release keystore (if configured)
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        env:
+          KEYSTORE_CHECK: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        if: ${{ env.KEYSTORE_CHECK != '' }}
         run: |
           echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > android/app/release.keystore
 
